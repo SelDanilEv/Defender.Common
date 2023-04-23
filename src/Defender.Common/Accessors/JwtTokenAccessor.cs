@@ -14,13 +14,13 @@ public class JwtTokenAccessor : IJwtTokenAccessor
         _httpContextAccessor = httpContextAccessor;
     }
 
-    public JwtInfo? JwtInfo
+    public AccountInfo? JwtInfo
     {
         get
         {
             var currentUserClaims = _httpContextAccessor.HttpContext?.User.Claims;
 
-            var jwt = new JwtInfo();
+            var jwt = new AccountInfo();
 
             if (Guid.TryParse(
                 currentUserClaims
