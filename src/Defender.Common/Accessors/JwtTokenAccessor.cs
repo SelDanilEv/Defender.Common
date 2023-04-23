@@ -1,7 +1,7 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
-using Defender.Common.Entities.User;
 using Defender.Common.Interfaces;
+using Defender.Common.Entities;
 
 namespace Defender.Common.Accessors;
 

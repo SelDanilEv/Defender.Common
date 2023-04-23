@@ -1,4 +1,4 @@
-﻿using Defender.Common.Entities.User;
+﻿using Defender.Common.Entities;
 
 namespace Defender.Common.Interfaces;
 

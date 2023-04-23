@@ -1,11 +1,12 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
 
-namespace Defender.Common.Entities.User;
+namespace Defender.Common.Entities;
 
 public class AccountInfo : IBaseModel
 {
     [BsonId]
     public Guid Id { get; set; }
+    public string? PasswordHash { get; set; }
     public bool IsPhoneVerified { get; set; }
     public bool IsEmailVerified { get; set; }
     public List<string> Roles { get; set; } = new List<string>();

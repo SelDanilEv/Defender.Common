@@ -1,6 +1,6 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
 
-namespace Defender.Common.Entities.User;
+namespace Defender.Common.Entities;
 
 public class UserInfo : IBaseModel
 {
@@ -9,7 +9,6 @@ public class UserInfo : IBaseModel
     public string? Email { get; set; }
     public string? PhoneNumber { get; set; }
     public string? Nickname { get; set; }
-    public string? PasswordHash { get; set; }
 
     public DateTime? CreatedDate { get; set; }
 }
