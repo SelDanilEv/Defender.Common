@@ -5,6 +5,7 @@ namespace Defender.Common.Entities;
 
 public interface IBaseModel
 {
-    [BsonRepresentation(BsonType.ObjectId)]
-    public Guid Id { get; set; }
+    [BsonId]
+    [BsonRepresentation(BsonType.String)]
+    Guid Id { get; set; }
 }
