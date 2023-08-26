@@ -2,13 +2,13 @@
 using Defender.Common.DTOs;
 using Defender.Common.Entities;
 
-namespace Defender.Common.Models;
+namespace Defender.Common.Mapping;
 
 public class MappingProfile : Profile
 {
     public MappingProfile()
     {
-        this.CreateMap<AccountInfo, AccountDto>();
-        this.CreateMap<UserInfo, UserDto>();
+        CreateMap<AccountInfo, AccountDto>();
+        CreateMap<UserInfo, UserDto>();
     }
 }
