@@ -1,9 +1,9 @@
-﻿using Defender.Common.Entities;
+﻿using Defender.Common.DTOs;
 
 namespace Defender.Common.Interfaces;
 
 public interface IJwtTokenAccessor
 {
-    AccountInfo? JwtInfo { get; }
+    AccountDto? JwtInfo { get; }
     string Token { get; }
 }

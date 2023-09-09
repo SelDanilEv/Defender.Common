@@ -1,7 +1,7 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using Defender.Common.Interfaces;
-using Defender.Common.Entities;
+using Defender.Common.DTOs;
 
 namespace Defender.Common.Accessors;
 
@@ -14,13 +14,13 @@ public class JwtTokenAccessor : IJwtTokenAccessor
         _httpContextAccessor = httpContextAccessor;
     }
 
-    public AccountInfo? JwtInfo
+    public AccountDto? JwtInfo
     {
         get
         {
             var currentUserClaims = _httpContextAccessor.HttpContext?.User.Claims;
 
-            var jwt = new AccountInfo();
+            var jwt = new AccountDto();
 
             if (Guid.TryParse(
                 currentUserClaims
