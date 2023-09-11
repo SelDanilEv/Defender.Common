@@ -4,15 +4,8 @@ namespace Defender.Common.Exceptions
 {
     public class ServiceException : Exception
     {
-        public Dictionary<string, string> Properties { get; set; } = new Dictionary<string, string>();
-
         public ServiceException()
         {
-        }
-
-        public ServiceException(Dictionary<string, string> properties)
-        {
-            Properties = properties;
         }
 
         public ServiceException(string? message) : base(message)
