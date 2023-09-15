@@ -2,8 +2,8 @@
 
 namespace Defender.Common.Interfaces;
 
-public interface IJwtTokenAccessor
+public interface IAccountAccessor
 {
-    AccountDto? JwtInfo { get; }
+    AccountDto? AccountInfo { get; }
     string Token { get; }
 }

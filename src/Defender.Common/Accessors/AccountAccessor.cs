@@ -5,16 +5,16 @@ using Defender.Common.DTOs;
 
 namespace Defender.Common.Accessors;
 
-public class JwtTokenAccessor : IJwtTokenAccessor
+public class AccountAccessor : IAccountAccessor
 {
     private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public JwtTokenAccessor(IHttpContextAccessor httpContextAccessor)
+    public AccountAccessor(IHttpContextAccessor httpContextAccessor)
     {
         _httpContextAccessor = httpContextAccessor;
     }
 
-    public AccountDto? JwtInfo
+    public AccountDto? AccountInfo
     {
         get
         {

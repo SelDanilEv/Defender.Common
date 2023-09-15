@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using Defender.Common.Errors;
+using System.Runtime.Serialization;
 
 namespace Defender.Common.Exceptions
 {
@@ -9,6 +10,10 @@ namespace Defender.Common.Exceptions
         }
 
         public ServiceException(string? message) : base(message)
+        {
+        }
+
+        public ServiceException(ErrorCode message) : base(ErrorCodeHelper.GetErrorCode(message))
         {
         }
 

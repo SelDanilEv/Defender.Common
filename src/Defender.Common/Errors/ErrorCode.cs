@@ -8,10 +8,17 @@
         #region Business rules
 
         BR_ACC_InvalidPassword,
+        BR_ACC_AdminCannotChangeAdminPassword,
+        BR_ACC_UserCanUpdateOnlyOwnAccount,
+        BR_ACC_UserIsBlocked,
+        BR_ACC_SuperAdminCannotBeBlocked,
+        BR_ACC_AdminCannotBlockAdmins,
 
         #endregion
 
         #region Validation
+
+        VL_InvalidRequest,
 
         VL_ACC_EmptyGoogleToken,
         VL_ACC_EmptyLogin,
@@ -27,7 +34,6 @@
 
         VL_ACC_InvalidPhoneNumber,
         VL_ACC_InvalidEmail,
-
 
         #endregion
 
