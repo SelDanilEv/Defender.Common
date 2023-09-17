@@ -17,6 +17,10 @@ namespace Defender.Common.Exceptions
         {
         }
 
+        public ServiceException(ErrorCode message, Exception? innerException) : base(ErrorCodeHelper.GetErrorCode(message), innerException)
+        {
+        }
+
         public ServiceException(string? message, Exception? innerException) : base(message, innerException)
         {
         }

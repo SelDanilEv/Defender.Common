@@ -7,6 +7,8 @@
 
         #region Business rules
 
+        #region Identity service
+
         BR_ACC_InvalidPassword,
         BR_ACC_AdminCannotChangeAdminPassword,
         BR_ACC_UserCanUpdateOnlyOwnAccount,
@@ -14,11 +16,32 @@
         BR_ACC_SuperAdminCannotBeBlocked,
         BR_ACC_AdminCannotBlockAdmins,
 
+        #endregion Identity service
+
+
+        #region User management service
+
+        BR_USM_EmailAddressInUse,
+        BR_USM_PhoneNumberInUse,
+        BR_USM_NicknameInUse,
+        BR_USM_UserWithSuchLoginIsNotExist,
+
+        #endregion User management service
+
         #endregion
 
         #region Validation
 
         VL_InvalidRequest,
+
+        #region User management service
+
+        VL_USM_EmptyLogin,
+
+        #endregion User management service
+
+
+        #region Identity service
 
         VL_ACC_EmptyGoogleToken,
         VL_ACC_EmptyLogin,
@@ -35,7 +58,9 @@
         VL_ACC_InvalidPhoneNumber,
         VL_ACC_InvalidEmail,
 
-        #endregion
+        #endregion Identity service
+
+        #endregion Validation
 
         #region External service exception
 

@@ -1,6 +1,6 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
+﻿namespace Defender.Common.DTOs;
 
-namespace Defender.Common.DTOs;
+using Role = Models.Roles;
 
 public class AccountDto
 {
@@ -12,9 +12,18 @@ public class AccountDto
 
     public List<string> Roles { get; set; } = new List<string>();
 
-    [BsonIgnore]
-    public bool IsAdmin => this.Roles.Contains(Models.Roles.SuperAdmin) || this.Roles.Contains(Models.Roles.Admin);
+    public bool IsAdmin => Roles.Contains(Role.SuperAdmin) || Roles.Contains(Role.Admin);
 
-    [BsonIgnore]
-    public bool IsSuperAdmin => this.Roles.Contains(Models.Roles.SuperAdmin);
+    public bool IsSuperAdmin => Roles.Contains(Role.SuperAdmin);
+
+    public bool HasRole(string role) => Roles.Contains(role);
+
+    public string GetHighestRole()
+    {
+        if (Roles.Contains(Role.SuperAdmin)) return Role.SuperAdmin;
+        if (Roles.Contains(Role.Admin)) return Role.Admin;
+        if (Roles.Contains(Role.User)) return Role.User;
+
+        return Role.Guest;
+    }
 }
