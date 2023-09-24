@@ -1,4 +1,5 @@
 ﻿using Defender.Common.Enums;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Defender.Common.Helpers;
 
@@ -6,24 +7,30 @@ public static class SecretsHelper
 {
     private const string EnvironmentVariablePrefix = "Defender_App_";
 
-    private static readonly Dictionary<string, string> _environmentVariables =
-        new Dictionary<string, string>();
+    private static readonly MemoryCache cache = new MemoryCache(new MemoryCacheOptions());
 
     public static string GetSecret(Secret envVariable)
     {
-        return GetSecret(MapEnvVariableToKey(envVariable));
+        return GetSecretFromEnvVariables(envVariable.ToString());
     }
 
-    public static string GetSecret(string key)
+    public static string GetSecret(string envVariable)
+    {
+        return GetSecretFromEnvVariables(envVariable);
+    }
+
+    private static string GetSecretFromEnvVariables(string key)
     {
         if (string.IsNullOrWhiteSpace(key))
         {
             return string.Empty;
         }
 
-        if (_environmentVariables.ContainsKey(key))
+        key = MapEnvVariableToKey(key);
+
+        if (cache.TryGetValue(key, out var cachedValue))
         {
-            return _environmentVariables[key];
+            return (string)cachedValue;
         }
 
         var value =
@@ -36,11 +43,14 @@ public static class SecretsHelper
             return string.Empty;
         }
 
-        _environmentVariables.Add(key, value);
+        cache.Set(key, value, DateTime.UtcNow.AddMinutes(5));
 
         return value;
     }
 
+    private static string MapEnvVariableToKey(string envVariable) =>
+        EnvironmentVariablePrefix + envVariable;
+
     private static string MapEnvVariableToKey(Secret envVariable) =>
-        EnvironmentVariablePrefix + envVariable.ToString();
+        MapEnvVariableToKey(envVariable.ToString());
 }

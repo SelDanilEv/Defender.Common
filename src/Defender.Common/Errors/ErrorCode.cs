@@ -40,7 +40,6 @@
 
         #endregion User management service
 
-
         #region Identity service
 
         VL_ACC_EmptyGoogleToken,
@@ -60,17 +59,35 @@
 
         #endregion Identity service
 
+        #region Notification service
+
+        VL_NTF_EmptyNotificationId,
+        VL_NTF_EmptyRecipient,
+        VL_NTF_EmptySubject,
+        VL_NTF_EmptyBody,
+
+        VL_NTF_MinSubjectLength,
+        VL_NTF_MaxSubjectLength,
+
+        VL_NTF_MaxBodyLength,
+
+        VL_NTF_InvalidEmail,
+
+        #endregion
+
         #endregion Validation
 
         #region External service exception
 
         ES_GoogleAPIIssue,
+        ES_SendinBlueIssue,
 
         #endregion
 
         #region Common rules
 
         CM_ForbiddenAccess,
+        CM_DatabaseIssue,
 
         #endregion
     }

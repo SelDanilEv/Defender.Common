@@ -4,7 +4,5 @@ public enum Secret
 {
     JwtSecret,
     HashSalt,
-    GoogleClientId,
-    GoogleClientSecret,
     MongoDBPassword,
 }
