@@ -16,8 +16,12 @@
         BR_ACC_SuperAdminCannotBeBlocked,
         BR_ACC_AdminCannotBlockAdmins,
 
-        #endregion Identity service
+        BR_ACC_AccessCodeWasExpired,
+        BR_ACC_AccessCodeWasAlreadyUsed,
+        BR_ACC_AttemtsAreOver,
+        BR_ACC_CodeWasNotVerified,
 
+        #endregion Identity service
 
         #region User management service
 
@@ -36,6 +40,7 @@
 
         #region User management service
 
+        VL_USM_EmptyUserId,
         VL_USM_EmptyLogin,
 
         #endregion User management service
@@ -45,6 +50,7 @@
         VL_ACC_EmptyGoogleToken,
         VL_ACC_EmptyLogin,
         VL_ACC_EmptyEmail,
+        VL_ACC_EmptyUserId,
         VL_ACC_EmptyNickname,
         VL_ACC_EmptyPassword,
 
@@ -65,6 +71,7 @@
         VL_NTF_EmptyRecipient,
         VL_NTF_EmptySubject,
         VL_NTF_EmptyBody,
+        VL_NTF_EmptyValidationLink,
 
         VL_NTF_MinSubjectLength,
         VL_NTF_MaxSubjectLength,

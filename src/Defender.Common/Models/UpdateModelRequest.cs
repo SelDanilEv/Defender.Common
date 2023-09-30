@@ -13,29 +13,30 @@ namespace Defender.Common.Models
         private T _modelBackup;
         private T _model;
 
-        public UpdateModelRequest()
+        private Guid _modelId;
+
+        private UpdateModelRequest()
         {
             _updateDefinitions = new List<UpdateDefinition<T>>();
             _updateDefinitionBuilder = Builders<T>.Update;
         }
 
-        public static UpdateModelRequest<T> Init()
+        public static UpdateModelRequest<T> Init(Guid modelId)
         {
-            return new UpdateModelRequest<T>()
-            {
-                _model = new T(),
-                _modelBackup = new T(),
-            };
+            return Init(new T() { Id = modelId });
         }
 
         public static UpdateModelRequest<T> Init(T model)
         {
             return new UpdateModelRequest<T>()
             {
+                _modelId = model.Id,
                 _model = model,
                 _modelBackup = model.DeepClone()
             };
         }
+
+        public Guid ModelId => this._modelId;
 
         public UpdateModelRequest<T> CommitChanges()
         {
