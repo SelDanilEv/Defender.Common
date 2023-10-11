@@ -27,7 +27,7 @@ public partial class ApiException : ServiceException
     public ServiceException ToServiceException()
     {
         var details = Newtonsoft.Json.JsonConvert.DeserializeObject<ProblemDetails>(Response);
-        return new ServiceException(ErrorCodeHelper.GetErrorCode(details.Detail));
+        return new ServiceException(ErrorCodeHelper.GetErrorCode(details?.Detail));
     }
 }
 

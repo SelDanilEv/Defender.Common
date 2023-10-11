@@ -20,22 +20,22 @@ public class AccountAccessor : IAccountAccessor
         {
             var currentUserClaims = _httpContextAccessor.HttpContext?.User.Claims;
 
-            var jwt = new AccountDto();
+            var account = new AccountDto();
 
             if (Guid.TryParse(
                 currentUserClaims
                     .FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value,
                 out var guid))
             {
-                jwt.Id = guid;
+                account.Id = guid;
             }
 
-            jwt.Roles = currentUserClaims
+            account.Roles = currentUserClaims
                 .Where(x => x.Type == ClaimTypes.Role)
                 .Select(x => x.Value)
                 .ToList();
 
-            return jwt;
+            return account;
         }
     }
 

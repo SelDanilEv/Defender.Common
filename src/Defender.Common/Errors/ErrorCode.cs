@@ -32,6 +32,12 @@
 
         #endregion User management service
 
+        #region Portal
+
+        BR_PTL_UserActivityMustHaveUserId,
+
+        #endregion Portal
+
         #endregion
 
         #region Validation
