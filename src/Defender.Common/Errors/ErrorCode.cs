@@ -32,6 +32,12 @@
 
         #endregion User management service
 
+        #region Walutomat helper service
+
+        BR_WHS_NotSupportedCurrencyPair,
+
+        #endregion Portal
+
         #region Portal
 
         BR_PTL_UserActivityMustHaveUserId,
@@ -101,6 +107,7 @@
 
         CM_ForbiddenAccess,
         CM_DatabaseIssue,
+        CM_MappingIssue,
 
         #endregion
     }

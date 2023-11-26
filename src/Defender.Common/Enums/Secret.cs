@@ -5,4 +5,5 @@ public enum Secret
     JwtSecret,
     HashSalt,
     MongoDBPassword,
+    SecretsEncryptionKey,
 }

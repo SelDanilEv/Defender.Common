@@ -106,13 +106,13 @@ public class MongoRepository<T> : BaseMongoRepository<T> where T : IBaseModel, n
         return newModel;
     }
 
-    protected override async Task<T> UpdateItemAsync(Guid id, UpdateDefinition<T> updateDefinition)
+    protected override async Task<T> UpdateItemAsync(UpdateModelRequest<T> request)
     {
         try
         {
-            var filter = CreateIdFilter(id);
+            var filter = CreateIdFilter(request.ModelId);
 
-            return await _mongoCollection.FindOneAndUpdateAsync(filter, updateDefinition);
+            return await _mongoCollection.FindOneAndUpdateAsync(filter, request.BuildUpdateDefinition());
         }
         catch (Exception e)
         {

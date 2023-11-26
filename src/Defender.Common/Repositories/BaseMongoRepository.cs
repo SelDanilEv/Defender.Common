@@ -1,5 +1,4 @@
-﻿using System.Linq.Expressions;
-using Defender.Common.Configuration.Options;
+﻿using Defender.Common.Configuration.Options;
 using Defender.Common.Entities;
 using Defender.Common.Enums;
 using Defender.Common.Helpers;
@@ -17,11 +16,6 @@ public abstract class BaseMongoRepository<Model> where Model : IBaseModel, new()
 
     protected BaseMongoRepository(MongoDbOptions mongoOption)
     {
-        mongoOption.ConnectionString =
-            string.Format(
-                mongoOption.ConnectionString,
-                SecretsHelper.GetSecret(Secret.MongoDBPassword));
-
         client ??= new MongoClient(mongoOption.ConnectionString);
 
         database ??= client.GetDatabase($"{mongoOption.Environment}_{mongoOption.AppName}");
@@ -55,7 +49,7 @@ public abstract class BaseMongoRepository<Model> where Model : IBaseModel, new()
         throw new NotImplementedException();
     }
 
-    protected virtual Task UpdateItemAsync(Guid id, UpdateDefinition<Model> updateDefinition)
+    protected virtual Task UpdateItemAsync(UpdateModelRequest<Model> updateRequest)
     {
         throw new NotImplementedException();
     }

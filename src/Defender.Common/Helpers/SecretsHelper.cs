@@ -1,22 +1,56 @@
 ﻿using Defender.Common.Enums;
+using Defender.Common.Interfaces;
 using Microsoft.Extensions.Caching.Memory;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Defender.Common.Helpers;
 
 public static class SecretsHelper
 {
     private const string EnvironmentVariablePrefix = "Defender_App_";
+    private const int CacheExpirationMintures = 5;
 
     private static readonly MemoryCache cache = new MemoryCache(new MemoryCacheOptions());
 
-    public static string GetSecret(Secret envVariable)
+    private static IMongoSecretAccessor _mongoSecretAccessor;
+
+    public static void Initialize(IMongoSecretAccessor mongoSecretAccessor)
     {
-        return GetSecretFromEnvVariables(envVariable.ToString());
+        _mongoSecretAccessor = mongoSecretAccessor;
     }
 
-    public static string GetSecret(string envVariable)
+    public static async Task<string> GetSecretAsync(Secret envVariable)
     {
-        return GetSecretFromEnvVariables(envVariable);
+        return await GetSecretAsync(envVariable.ToString());
+    }
+
+    public static async Task<string> GetSecretAsync(string key)
+    {
+        var secret = GetSecretFromEnvVariables(key);
+
+        if (string.IsNullOrWhiteSpace(secret))
+        {
+            secret = await GetSecretFromMongoSecrets(key);
+        }
+
+        return secret;
+    }
+
+    private static async Task<string> GetSecretFromMongoSecrets(string key)
+    {
+        if (string.IsNullOrWhiteSpace(key) || _mongoSecretAccessor == null)
+        {
+            return string.Empty;
+        }
+
+        var secret = await _mongoSecretAccessor.GetSecretValueAsync(key);
+
+        if (!string.IsNullOrWhiteSpace(secret))
+        {
+            cache.Set(key, secret, DateTime.UtcNow.AddMinutes(CacheExpirationMintures));
+        }
+
+        return secret;
     }
 
     private static string GetSecretFromEnvVariables(string key)
@@ -51,6 +85,19 @@ public static class SecretsHelper
     private static string MapEnvVariableToKey(string envVariable) =>
         EnvironmentVariablePrefix + envVariable;
 
-    private static string MapEnvVariableToKey(Secret envVariable) =>
-        MapEnvVariableToKey(envVariable.ToString());
+
+    #region Sync - no mongo secrets
+    [SuppressMessage("Usage", "Use this method only in contructors (only env variables secrets)")]
+    public static string GetSecretSync(Secret envVariable)
+    {
+        return GetSecretFromEnvVariables(envVariable.ToString());
+    }
+
+    public static string GetSecretSync(string envVariable)
+    {
+        var secret = GetSecretFromEnvVariables(envVariable);
+
+        return secret;
+    }
+    #endregion
 }
