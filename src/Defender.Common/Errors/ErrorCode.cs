@@ -94,6 +94,13 @@
 
         #endregion
 
+        #region Secret management service
+
+        VL_SCM_EmptySecretName,
+        VL_SCM_EmptySecretValue,
+
+        #endregion
+
         #endregion Validation
 
         #region External service exception
