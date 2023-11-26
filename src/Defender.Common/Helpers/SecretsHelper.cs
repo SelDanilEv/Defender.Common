@@ -43,7 +43,7 @@ public static class SecretsHelper
             return string.Empty;
         }
 
-        var secret = await _mongoSecretAccessor.GetSecretValueAsync(key);
+        var secret = await _mongoSecretAccessor.GetSecretValueByNameAsync(key);
 
         if (!string.IsNullOrWhiteSpace(secret))
         {

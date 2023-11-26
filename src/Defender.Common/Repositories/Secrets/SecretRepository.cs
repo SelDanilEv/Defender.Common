@@ -8,18 +8,18 @@ using Microsoft.Extensions.Options;
 
 namespace Defender.Common.Repositories.Secrets;
 
-public class SecretsRepository : MongoRepository<MongoSecret>, IMongoSecretAccessor, IMongoSecretService
+internal class SecretRepository : MongoRepository<MongoSecret>, IMongoSecretAccessor
 {
-    public SecretsRepository(IOptions<MongoDbOptions> mongoOption)
+    public SecretRepository(IOptions<MongoDbOptions> mongoOption)
         : base(new MongoDbOptions(ConstValues.SecretManagementServiceMongoDBName, mongoOption?.Value))
     {
     }
 
     public async Task<MongoSecret> CreateOrUpdateSecretAsync(string secretName, string value)
     {
-        value = await CryptographyHelper.EncryptString(value, secretName);
+        value = await CryptographyHelper.EncryptStringAsync(value, secretName);
 
-        var existingSecret = await GetMongoSecretByName(secretName);
+        var existingSecret = await GetSecretByNameAsync(secretName);
 
         if (existingSecret == null)
         {
@@ -35,19 +35,19 @@ public class SecretsRepository : MongoRepository<MongoSecret>, IMongoSecretAcces
         return await UpdateItemAsync(updateRequest);
     }
 
-    public async Task<string> GetSecretValueAsync(string secretName)
+    public async Task<string> GetSecretValueByNameAsync(string secretName)
     {
-        var secret = await GetMongoSecretByName(secretName);
+        var secret = await GetSecretByNameAsync(secretName);
 
         if (secret == null)
         {
             return String.Empty;
         }
 
-        return await CryptographyHelper.DecryptString(secret?.Value, secretName);
+        return await CryptographyHelper.DecryptStringAsync(secret?.Value, secretName);
     }
 
-    private async Task<MongoSecret> GetMongoSecretByName(string secretName)
+    public async Task<MongoSecret> GetSecretByNameAsync(string secretName)
     {
         var findModelRequest = FindModelRequest<MongoSecret>.Init(x => x.SecretName, secretName);
 

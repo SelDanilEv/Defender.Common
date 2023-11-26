@@ -1,6 +1,9 @@
-﻿namespace Defender.Common.Interfaces;
+﻿using Defender.Common.Entities.Secrets;
+
+namespace Defender.Common.Interfaces;
 
 public interface IMongoSecretAccessor
 {
-    public Task<string> GetSecretValueAsync(string secretName);
+    Task<string> GetSecretValueByNameAsync(string secretName);
+    Task<MongoSecret> GetSecretByNameAsync(string secretName);
 }

@@ -36,7 +36,7 @@ public static class CommonServiceExtensions
 
     public static IServiceCollection AddSecretAccessor(this IServiceCollection services)
     {
-        services.AddSingleton<IMongoSecretAccessor, SecretsRepository>();
+        services.AddSingleton<IMongoSecretAccessor, SecretRepository>();
 
         var mongoSecretAccesor = services
             .BuildServiceProvider()
@@ -46,13 +46,6 @@ public static class CommonServiceExtensions
         {
             SecretsHelper.Initialize(mongoSecretAccesor);
         }
-
-        return services;
-    }
-
-    public static IServiceCollection AddSecretManager(this IServiceCollection services)
-    {
-        services.AddSingleton<IMongoSecretService, SecretsRepository>();
 
         return services;
     }
