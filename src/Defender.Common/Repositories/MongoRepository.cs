@@ -17,52 +17,40 @@ public class MongoRepository<T> : BaseMongoRepository<T> where T : IBaseModel, n
 
     protected override async Task<T> GetItemAsync(Guid id)
     {
-        var result = new T();
-
         try
         {
             var filter = CreateIdFilter(id);
 
-            result = await _mongoCollection.Find(filter).FirstOrDefaultAsync();
+            return await _mongoCollection.Find(filter).FirstOrDefaultAsync();
         }
         catch (Exception e)
         {
             throw new ServiceException(ErrorCode.CM_DatabaseIssue);
         }
-
-        return result;
     }
 
     protected override async Task<T> GetItemAsync(FindModelRequest<T> request)
     {
-        var result = new T();
-
         try
         {
-            result = await _mongoCollection.Find(request.BuildFilterDefinition()).FirstOrDefaultAsync();
+            return await _mongoCollection.Find(request.BuildFilterDefinition()).FirstOrDefaultAsync();
         }
         catch (Exception e)
         {
             throw new ServiceException(ErrorCode.CM_DatabaseIssue);
         }
-
-        return result;
     }
 
     protected override async Task<IList<T>> GetItemsAsync()
     {
-        var result = new List<T>();
-
         try
         {
-            result = await _mongoCollection.Find(new BsonDocument()).ToListAsync();
+            return await _mongoCollection.Find(new BsonDocument()).ToListAsync();
         }
         catch (Exception e)
         {
             throw new ServiceException(ErrorCode.CM_DatabaseIssue);
         }
-
-        return result;
     }
 
     protected override async Task<PagedResult<T>> GetItemsAsync(PaginationSettings<T> settings)
@@ -76,7 +64,7 @@ public class MongoRepository<T> : BaseMongoRepository<T> where T : IBaseModel, n
         try
         {
             var query = _mongoCollection.Find(settings.Filter);
-            var totalTask = query.CountAsync();
+            var totalTask = query.CountDocumentsAsync();
             var itemsTask = query.Skip(settings.Offset).Limit(settings.PageSize).ToListAsync();
             await Task.WhenAll(totalTask, itemsTask);
 

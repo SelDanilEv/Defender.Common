@@ -11,7 +11,8 @@ namespace Defender.Common.Repositories.Secrets;
 internal class SecretRepository : MongoRepository<MongoSecret>, IMongoSecretAccessor
 {
     public SecretRepository(IOptions<MongoDbOptions> mongoOption)
-        : base(new MongoDbOptions(ConstValues.SecretManagementServiceMongoDBName, mongoOption?.Value))
+        : base(new MongoDbOptions(
+            ConstValues.SecretManagementServiceMongoDBName, mongoOption?.Value!))
     {
     }
 
@@ -44,7 +45,7 @@ internal class SecretRepository : MongoRepository<MongoSecret>, IMongoSecretAcce
             return String.Empty;
         }
 
-        return await CryptographyHelper.DecryptStringAsync(secret?.Value, secretName);
+        return await CryptographyHelper.DecryptStringAsync(secret?.Value!, secretName);
     }
 
     public async Task<MongoSecret> GetSecretByNameAsync(string secretName)

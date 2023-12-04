@@ -1,5 +1,4 @@
 ﻿using Defender.Common.Enums;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 

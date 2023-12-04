@@ -11,11 +11,11 @@
   },
   "codeGenerators": {
     "openApiToCSharpClient": {
-      "clientBaseClass": "INotificationClient",
-      "configurationClass": null,
+      "clientBaseClass": "",
+      "configurationClass": "",
       "generateClientClasses": true,
       "generateClientInterfaces": true,
-      "clientBaseInterface": "",
+      "clientBaseInterface": "IBaseServiceClient",
       "injectHttpClient": true,
       "disposeHttpClient": true,
       "protectedMethods": [],
@@ -41,10 +41,11 @@
       "useRequestAndResponseSerializationSettings": false,
       "serializeTypeInformation": false,
       "queryNullValue": "",
-      "className": "{controller}NotificationAsServiceClient",
+      "className": "{controller}NotificationServiceClient",
       "operationGenerationMode": "MultipleClientsFromOperationId",
       "additionalNamespaceUsages": [
-        "Defender.Common.Exceptions"
+        "Defender.Common.Exceptions",
+        "Defender.Common.Clients.Base"
       ],
       "additionalContractNamespaceUsages": [],
       "generateOptionalParameters": false,

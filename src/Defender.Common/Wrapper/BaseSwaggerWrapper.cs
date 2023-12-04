@@ -3,41 +3,9 @@ using Defender.Common.Exceptions;
 
 namespace Defender.Common.Wrapper
 {
-    public class BaseSwaggerWrapper
+    public abstract class BaseSwaggerWrapper
     {
-        protected Result ExecuteSafely<Result>(Func<Result> action)
-        {
-            try
-            {
-                return action();
-            }
-            catch (ApiException ex)
-            {
-                throw ex.ToServiceException();
-            }
-            catch (Exception ex)
-            {
-                throw new ServiceException(ErrorCode.UnhandledError, ex);
-            }
-        }
-
-        protected void ExecuteSafely(Action action)
-        {
-            try
-            {
-                action();
-            }
-            catch (ApiException ex)
-            {
-                throw ex.ToServiceException();
-            }
-            catch (Exception ex)
-            {
-                throw new ServiceException(ErrorCode.UnhandledError, ex);
-            }
-        }
-
-        protected async Task<Result> ExecuteSafelyAsync<Result>(Func<Task<Result>> action)
+        protected virtual async Task<Result> ExecuteSafelyAsync<Result>(Func<Task<Result>> action)
         {
             try
             {
@@ -53,7 +21,7 @@ namespace Defender.Common.Wrapper
             }
         }
 
-        protected async Task ExecuteSafelyAsync(Func<Task> action)
+        protected virtual async Task ExecuteSafelyAsync(Func<Task> action)
         {
             try
             {

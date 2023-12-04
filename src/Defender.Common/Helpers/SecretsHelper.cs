@@ -12,7 +12,7 @@ public static class SecretsHelper
 
     private static readonly MemoryCache cache = new MemoryCache(new MemoryCacheOptions());
 
-    private static IMongoSecretAccessor _mongoSecretAccessor;
+    private static IMongoSecretAccessor? _mongoSecretAccessor;
 
     public static void Initialize(IMongoSecretAccessor mongoSecretAccessor)
     {
@@ -93,6 +93,7 @@ public static class SecretsHelper
         return GetSecretFromEnvVariables(envVariable.ToString());
     }
 
+    [SuppressMessage("Usage", "Use this method only in contructors (only env variables secrets)")]
     public static string GetSecretSync(string envVariable)
     {
         var secret = GetSecretFromEnvVariables(envVariable);
