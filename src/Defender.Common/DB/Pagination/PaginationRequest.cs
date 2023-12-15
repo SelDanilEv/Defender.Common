@@ -1,6 +1,6 @@
 ﻿using Defender.Common.Contst;
 
-namespace Defender.Common.Pagination;
+namespace Defender.Common.DB.Pagination;
 
 public record PaginationRequest
 {

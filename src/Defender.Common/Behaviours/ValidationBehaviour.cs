@@ -31,9 +31,11 @@ public class ValidationBehaviour<TRequest, TResponse> : IPipelineBehavior<TReque
 
             if (failures.Any())
             {
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
                 var errorMessage = failures.Count > 0 ?
                     failures.FirstOrDefault().ErrorMessage :
                     ErrorCodeHelper.GetErrorCode(ErrorCode.Unknown);
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
 
                 throw new Exceptions.ValidationException(errorMessage, failures);
             }

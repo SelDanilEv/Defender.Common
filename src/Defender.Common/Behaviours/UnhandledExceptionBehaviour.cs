@@ -11,6 +11,7 @@ public class UnhandledExceptionBehaviour<TRequest, TResponse> : IPipelineBehavio
 
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
+#pragma warning disable CS0168 // Variable is declared but never used
         try
         {
             return await next();
@@ -21,5 +22,6 @@ public class UnhandledExceptionBehaviour<TRequest, TResponse> : IPipelineBehavio
 
             throw;
         }
+#pragma warning restore CS0168 // Variable is declared but never used
     }
 }

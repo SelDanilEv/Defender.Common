@@ -1,9 +1,9 @@
 ﻿using Defender.Common.Contst;
+using Defender.Common.DB.Model;
 using Defender.Common.Entities;
-using Defender.Common.Models;
 using MongoDB.Driver;
 
-namespace Defender.Common.Pagination;
+namespace Defender.Common.DB.Pagination;
 
 public record PaginationSettings<T> where T : IBaseModel, new()
 {

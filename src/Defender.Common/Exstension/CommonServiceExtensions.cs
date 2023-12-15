@@ -1,10 +1,10 @@
 ﻿using Defender.Common.Accessors;
 using Defender.Common.Behaviours;
 using Defender.Common.Configuration.Options;
+using Defender.Common.DB.Repositories.Secrets;
 using Defender.Common.Enums;
 using Defender.Common.Helpers;
 using Defender.Common.Interfaces;
-using Defender.Common.Repositories.Secrets;
 using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

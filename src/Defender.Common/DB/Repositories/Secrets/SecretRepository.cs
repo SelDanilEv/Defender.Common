@@ -1,14 +1,15 @@
 ﻿using Defender.Common.Configuration.Options;
 using Defender.Common.Contst;
+using Defender.Common.DB.Model;
+using Defender.Common.DB.Repositories;
 using Defender.Common.Entities.Secrets;
 using Defender.Common.Helpers;
 using Defender.Common.Interfaces;
-using Defender.Common.Models;
 using Microsoft.Extensions.Options;
 
-namespace Defender.Common.Repositories.Secrets;
+namespace Defender.Common.DB.Repositories.Secrets;
 
-internal class SecretRepository : MongoRepository<MongoSecret>, IMongoSecretAccessor
+internal class SecretRepository : BaseMongoRepository<MongoSecret>, IMongoSecretAccessor
 {
     public SecretRepository(IOptions<MongoDbOptions> mongoOption)
         : base(new MongoDbOptions(
@@ -31,7 +32,7 @@ internal class SecretRepository : MongoRepository<MongoSecret>, IMongoSecretAcce
 
         var updateRequest = UpdateModelRequest<MongoSecret>
             .Init(existingSecret)
-            .UpdateField(x=> x.Value, value);
+            .UpdateField(x => x.Value, value);
 
         return await UpdateItemAsync(updateRequest);
     }
@@ -42,7 +43,7 @@ internal class SecretRepository : MongoRepository<MongoSecret>, IMongoSecretAcce
 
         if (secret == null)
         {
-            return String.Empty;
+            return string.Empty;
         }
 
         return await CryptographyHelper.DecryptStringAsync(secret?.Value!, secretName);

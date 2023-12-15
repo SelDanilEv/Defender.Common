@@ -26,6 +26,7 @@ public class AuthenticationHeaderAccessor : IAuthenticationHeaderAccessor
 
         var schemaAndToken = _accountAccessor.Token?.Split(' ');
 
+#pragma warning disable CS8604 // Possible null reference argument.
         var headerValue = authorizationType switch
         {
             AuthorizationType.Service => new AuthenticationHeaderValue(
@@ -36,6 +37,7 @@ public class AuthenticationHeaderAccessor : IAuthenticationHeaderAccessor
                 : DefaultAuthenticationHeader,
             _ => DefaultAuthenticationHeader
         };
+#pragma warning restore CS8604 // Possible null reference argument.
 
         return headerValue;
     }

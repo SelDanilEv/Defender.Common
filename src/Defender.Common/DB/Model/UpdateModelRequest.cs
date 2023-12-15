@@ -3,7 +3,7 @@ using Force.DeepCloner;
 using MongoDB.Driver;
 using System.Linq.Expressions;
 
-namespace Defender.Common.Models
+namespace Defender.Common.DB.Model
 {
     public class UpdateModelRequest<T> where T : IBaseModel, new()
     {
@@ -15,7 +15,11 @@ namespace Defender.Common.Models
 
         private Guid _modelId;
 
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         private UpdateModelRequest()
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         {
             _updateDefinitions = new List<UpdateDefinition<T>>();
             _updateDefinitionBuilder = Builders<T>.Update;
@@ -36,7 +40,7 @@ namespace Defender.Common.Models
             };
         }
 
-        public Guid ModelId => this._modelId;
+        public Guid ModelId => _modelId;
 
         public UpdateModelRequest<T> CommitChanges()
         {
@@ -57,17 +61,21 @@ namespace Defender.Common.Models
         {
             _updateDefinitions.Add(_updateDefinitionBuilder.Set(field, value));
 
+#pragma warning disable CS0168 // Variable is declared but never used
             try
             {
                 if (_model != null)
                 {
                     var property = _model.GetType().GetProperty(((MemberExpression)field.Body).Member.Name);
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
                     var type = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
                     var val = Convert.ChangeType(value, type);
                     property.SetValue(_model, val, null);
                 }
             }
             catch (Exception e) { }
+#pragma warning restore CS0168 // Variable is declared but never used
 
             return this;
         }

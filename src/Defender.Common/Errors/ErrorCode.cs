@@ -107,6 +107,7 @@ public enum ErrorCode
 
     ES_GoogleAPIIssue,
     ES_SendinBlueIssue,
+    ES_WalutomatIssue,
 
     #endregion
 

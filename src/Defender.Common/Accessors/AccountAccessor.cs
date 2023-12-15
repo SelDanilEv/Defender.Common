@@ -22,6 +22,7 @@ public class AccountAccessor : IAccountAccessor
 
             var account = new AccountDto();
 
+#pragma warning disable CS8604 // Possible null reference argument.
             if (Guid.TryParse(
                 currentUserClaims
                     .FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value,
@@ -29,6 +30,7 @@ public class AccountAccessor : IAccountAccessor
             {
                 account.Id = guid;
             }
+#pragma warning restore CS8604 // Possible null reference argument.
 
             account.Roles = currentUserClaims
                 .Where(x => x.Type == ClaimTypes.Role)
@@ -43,7 +45,9 @@ public class AccountAccessor : IAccountAccessor
     {
         get
         {
+#pragma warning disable CS8603 // Possible null reference return.
             return _httpContextAccessor?.HttpContext?.Request?.Headers?.Authorization;
+#pragma warning restore CS8603 // Possible null reference return.
         }
     }
 }
