@@ -35,9 +35,7 @@ public static class CommonServiceExtensions
 
         services.PostConfigure<MongoDbOptions>(async options =>
         {
-            options.ConnectionString = string.Format(
-                options.ConnectionString,
-                await SecretsHelper.GetSecretAsync(Secret.MongoDBPassword));
+            options.ConnectionString = await SecretsHelper.GetSecretAsync(Secret.MongoDBConnectionString);
         });
 
         return services;
