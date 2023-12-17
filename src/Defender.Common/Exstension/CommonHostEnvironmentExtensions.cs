@@ -6,6 +6,9 @@ public static class CommonHostEnvironmentExtensions
 {
     public static bool IsLocalOrDevelopment(this IHostEnvironment hostEnvironment)
     {
-        return hostEnvironment.IsEnvironment("Development") || hostEnvironment.IsEnvironment("Local");
+        return hostEnvironment.IsEnvironment("Development")
+            || hostEnvironment.IsEnvironment("Local")
+            || hostEnvironment.IsEnvironment("DockerLocal")
+            || hostEnvironment.IsEnvironment("DockerDev");
     }
 }
