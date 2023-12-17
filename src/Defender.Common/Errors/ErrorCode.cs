@@ -54,6 +54,7 @@ public enum ErrorCode
 
     VL_USM_EmptyUserId,
     VL_USM_EmptyLogin,
+    VL_USM_EmptyEmail,
 
     #endregion User management service
 
