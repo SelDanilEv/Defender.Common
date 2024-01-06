@@ -125,7 +125,16 @@ public abstract class BaseMongoRepository<Model> where Model : IBaseModel, new()
         {
             var filter = CreateIdFilter(request.ModelId);
 
-            return await _mongoCollection.FindOneAndUpdateAsync(filter, request.BuildUpdateDefinition());
+            var options = new FindOneAndUpdateOptions<Model>
+            {
+                ReturnDocument = ReturnDocument.After,
+                IsUpsert = false
+            };
+
+            return await _mongoCollection.FindOneAndUpdateAsync(
+                filter,
+                request.BuildUpdateDefinition(),
+                options);
         }
         catch (Exception e)
         {

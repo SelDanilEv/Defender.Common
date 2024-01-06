@@ -54,7 +54,16 @@ public enum ErrorCode
 
     VL_USM_EmptyUserId,
     VL_USM_EmptyLogin,
+    VL_USM_EmptyNickname,
     VL_USM_EmptyEmail,
+
+    VL_USM_InvalidPhoneNumber,
+    VL_USM_InvalidEmail,
+
+    VL_USM_MinNicknameLength,
+    VL_USM_MaxNicknameLength,
+
+    VL_USM_AtLeastOneFieldRequired,
 
     #endregion User management service
 
@@ -84,7 +93,6 @@ public enum ErrorCode
     VL_NTF_EmptyRecipient,
     VL_NTF_EmptySubject,
     VL_NTF_EmptyBody,
-    VL_NTF_EmptyValidationLink,
 
     VL_NTF_MinSubjectLength,
     VL_NTF_MaxSubjectLength,

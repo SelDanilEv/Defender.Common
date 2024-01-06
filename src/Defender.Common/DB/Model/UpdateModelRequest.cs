@@ -57,6 +57,25 @@ namespace Defender.Common.DB.Model
             return this;
         }
 
+        public UpdateModelRequest<T> UpdateFieldIfNotNull<FType>(Expression<Func<T, FType>> field, FType value)
+        {
+            var condition = () => value != null;
+            if (value is string)
+            {
+                condition = () => value != null && (!string.IsNullOrWhiteSpace(value as string));
+            }
+
+            return UpdateField(field, value, condition);
+        }
+
+        public UpdateModelRequest<T> UpdateField<FType>(Expression<Func<T, FType>> field, FType value, Func<bool> condition)
+        {
+            if (condition())
+                return UpdateField(field, value);
+
+            return this;
+        }
+
         public UpdateModelRequest<T> UpdateField<FType>(Expression<Func<T, FType>> field, FType value)
         {
             _updateDefinitions.Add(_updateDefinitionBuilder.Set(field, value));
