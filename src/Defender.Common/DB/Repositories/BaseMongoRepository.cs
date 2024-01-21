@@ -36,7 +36,9 @@ public abstract class BaseMongoRepository<Model> where Model : IBaseModel, new()
         {
             var filter = CreateIdFilter(id);
 
-            return await _mongoCollection.Find(filter).FirstOrDefaultAsync();
+            return await _mongoCollection
+                .Find(filter)
+                .FirstOrDefaultAsync();
         }
         catch (Exception e)
         {
@@ -50,7 +52,10 @@ public abstract class BaseMongoRepository<Model> where Model : IBaseModel, new()
 #pragma warning disable CS0168 // Variable is declared but never used
         try
         {
-            return await _mongoCollection.Find(request.BuildFilterDefinition()).FirstOrDefaultAsync();
+            return await _mongoCollection
+                .Find(request.BuildFilterDefinition())
+                .Sort(request.BuildSortDefinition())
+                .FirstOrDefaultAsync();
         }
         catch (Exception e)
         {
@@ -64,7 +69,9 @@ public abstract class BaseMongoRepository<Model> where Model : IBaseModel, new()
 #pragma warning disable CS0168 // Variable is declared but never used
         try
         {
-            return await _mongoCollection.Find(new BsonDocument()).ToListAsync();
+            return await _mongoCollection
+                .Find(new BsonDocument())
+                .ToListAsync();
         }
         catch (Exception e)
         {
@@ -87,7 +94,10 @@ public abstract class BaseMongoRepository<Model> where Model : IBaseModel, new()
         {
             var query = _mongoCollection.Find(settings.Filter);
             var totalTask = query.CountDocumentsAsync();
-            var itemsTask = query.Skip(settings.Offset).Limit(settings.PageSize).ToListAsync();
+            var itemsTask = query
+                .Skip(settings.Offset)
+                .Limit(settings.PageSize)
+                .ToListAsync();
             await Task.WhenAll(totalTask, itemsTask);
 
             result.TotalItemsCount = totalTask.Result;

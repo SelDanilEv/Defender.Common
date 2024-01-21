@@ -10,6 +10,7 @@ public record PaginationSettings<T> where T : IBaseModel, new()
     public int Page { get; set; } = ConstValues.DefaultPaginationStartPage;
     public int PageSize { get; set; } = ConstValues.DefaultPaginationPageSize;
     public FilterDefinition<T> Filter { get; set; } = FilterDefinition<T>.Empty;
+    public SortDefinition<T> Sort { get; set; } = Builders<T>.Sort.Ascending(x => x.Id);
 
     public int Offset => (Page - 1) * PageSize;
 
@@ -27,9 +28,10 @@ public record PaginationSettings<T> where T : IBaseModel, new()
         };
     }
 
-    public PaginationSettings<T> AddFilter(FindModelRequest<T> request)
+    public PaginationSettings<T> SetupFindOptions(FindModelRequest<T> request)
     {
         Filter = request.BuildFilterDefinition();
+        Sort = request.BuildSortDefinition();
 
         return this;
     }

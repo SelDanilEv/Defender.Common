@@ -18,8 +18,8 @@ public enum ErrorCode
 
     BR_ACC_AccessCodeWasExpired,
     BR_ACC_AccessCodeWasAlreadyUsed,
-    BR_ACC_AttemtsAreOver,
     BR_ACC_CodeWasNotVerified,
+    BR_ACC_InvalidAccessCode,
 
     #endregion Identity service
 

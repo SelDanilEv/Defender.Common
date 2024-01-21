@@ -7,10 +7,12 @@ namespace Defender.Common.DB.Model
     public class FindModelRequest<T> where T : IBaseModel, new()
     {
         private FilterDefinition<T> _filterDefinition;
+        private SortDefinition<T> _sortDefinition;
 
         public FindModelRequest()
         {
             _filterDefinition = FilterDefinition<T>.Empty;
+            _sortDefinition = Builders<T>.Sort.Ascending(x=> x.Id);
         }
 
         public static FindModelRequest<T> Init()
@@ -78,9 +80,23 @@ namespace Defender.Common.DB.Model
             return this;
         }
 
+        public FindModelRequest<T> Sort<FType>(
+            Expression<Func<T, FType>> field,
+            SortType type = SortType.Asc)
+        {
+            _sortDefinition = BuildSortDefinition(field, type);
+
+            return this;
+        }
+
         public FilterDefinition<T> BuildFilterDefinition()
         {
             return _filterDefinition;
+        }
+
+        public SortDefinition<T> BuildSortDefinition()
+        {
+            return _sortDefinition;
         }
 
         private static FilterDefinition<T> BuildFilterDefinition<FType>(
@@ -97,6 +113,19 @@ namespace Defender.Common.DB.Model
                 FilterType.Lt => Builders<T>.Filter.Lt(field, value),
             };
 #pragma warning restore CS8524 // The switch expression does not handle some values of its input type (it is not exhaustive) involving an unnamed enum value.
+        }
+
+        private static SortDefinition<T> BuildSortDefinition<FType>(
+            Expression<Func<T, FType>> field,
+            SortType type)
+        {
+            var fieldDefinition = new ExpressionFieldDefinition<T>(field);
+
+            return type switch
+            {
+                SortType.Asc => Builders<T>.Sort.Ascending(fieldDefinition),
+                SortType.Desc => Builders<T>.Sort.Descending(fieldDefinition),
+            };
         }
     }
 }
