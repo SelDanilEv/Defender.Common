@@ -6,8 +6,19 @@ public record PagedResult<T>
     public long CurrentPage { get; set; }
     public long PageSize { get; set; }
     public long TotalPagesCount => TotalItemsCount / PageSize + 1;
+    public IList<T> Items { get; set; } = new List<T>();
 
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-    public IList<T> Items { get; set; }
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+    public static PagedResult<N> FromPagedResult<N>(
+        PagedResult<T> pagedResult,
+        Func<T,N> mapper
+        )
+    {
+        return new PagedResult<N>
+        {
+            TotalItemsCount = pagedResult.TotalItemsCount,
+            CurrentPage = pagedResult.CurrentPage,
+            PageSize = pagedResult.PageSize,
+            Items = pagedResult.Items.Select(mapper).ToList()
+        };
+    }
 }
