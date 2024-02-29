@@ -5,7 +5,9 @@ public enum ErrorCode
     Unknown,
     UnhandledError,
 
+
     #region Business rules
+
 
     #region Identity service
 
@@ -23,6 +25,7 @@ public enum ErrorCode
 
     #endregion Identity service
 
+
     #region User management service
 
     BR_USM_EmailAddressInUse,
@@ -32,11 +35,29 @@ public enum ErrorCode
 
     #endregion User management service
 
+
     #region Walutomat helper service
 
     BR_WHS_NotSupportedCurrencyPair,
 
     #endregion Portal
+
+
+    #region Wallet service
+
+
+    BR_WLT_CurrencyAccountAlredyExist,
+    BR_WLT_CurrencyAccountIsNotExist,
+    BR_WLT_SenderCurrencyAccountIsNotExist,
+    BR_WLT_RecipientCurrencyAccountIsNotExist,
+    BR_WLT_NoAvailableWalletNumbers,
+    BR_WLT_InvalidTransactionStatus,
+    BR_WLT_WalletIsNotExist,
+    BR_WLT_NotEnoughFunds,
+
+
+    #endregion
+
 
     #region Portal
 
@@ -44,13 +65,18 @@ public enum ErrorCode
 
     #endregion Portal
 
+
     #endregion
+
 
     #region Validation
 
+
     VL_InvalidRequest,
 
+
     #region User management service
+
 
     VL_USM_EmptyUserId,
     VL_USM_EmptyLogin,
@@ -65,9 +91,12 @@ public enum ErrorCode
 
     VL_USM_AtLeastOneFieldRequired,
 
+
     #endregion User management service
 
+
     #region Identity service
+
 
     VL_ACC_EmptyGoogleToken,
     VL_ACC_EmptyLogin,
@@ -85,9 +114,12 @@ public enum ErrorCode
     VL_ACC_InvalidPhoneNumber,
     VL_ACC_InvalidEmail,
 
+
     #endregion Identity service
 
+
     #region Notification service
+
 
     VL_NTF_EmptyNotificationId,
     VL_NTF_EmptyRecipient,
@@ -101,30 +133,61 @@ public enum ErrorCode
 
     VL_NTF_InvalidEmail,
 
+
     #endregion
 
+
+    #region Wallet service
+
+
+    VL_WLT_EmptyTransactionId,
+
+
+    #endregion
+
+
     #region Secret management service
+
 
     VL_SCM_EmptySecretName,
     VL_SCM_EmptySecretValue,
 
+
     #endregion
+
+
+    #region Wallet management service
+
+
+    VL_WLT_EmptyUserId,
+
+
+    #endregion 
+
 
     #endregion Validation
 
+
     #region External service exception
+
 
     ES_GoogleAPIIssue,
     ES_SendinBlueIssue,
     ES_WalutomatIssue,
 
+
     #endregion
+
 
     #region Common rules
 
+
+    CM_InvalidUserJWT,
+    CM_NotFound,
     CM_ForbiddenAccess,
     CM_DatabaseIssue,
     CM_MappingIssue,
+
 
     #endregion
 }

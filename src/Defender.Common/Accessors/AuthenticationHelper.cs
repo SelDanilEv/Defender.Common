@@ -9,11 +9,11 @@ namespace Defender.Common.Accessors;
 public class AuthenticationHeaderAccessor : IAuthenticationHeaderAccessor
 {
     private readonly IConfiguration _configuration;
-    private readonly IAccountAccessor _accountAccessor;
+    private readonly ICurrentAccountAccessor _accountAccessor;
 
     public AuthenticationHeaderAccessor(
         IConfiguration configuration,
-        IAccountAccessor accountAccessor
+        ICurrentAccountAccessor accountAccessor
         )
     {
         _configuration = configuration;

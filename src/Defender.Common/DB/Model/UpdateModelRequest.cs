@@ -1,5 +1,4 @@
 ﻿using Defender.Common.Entities;
-using Force.DeepCloner;
 using MongoDB.Driver;
 using System.Linq.Expressions;
 
@@ -10,16 +9,9 @@ namespace Defender.Common.DB.Model
         private readonly List<UpdateDefinition<T>> _updateDefinitions;
         private readonly UpdateDefinitionBuilder<T> _updateDefinitionBuilder;
 
-        private T _modelBackup;
-        private T _model;
-
         private Guid _modelId;
 
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         private UpdateModelRequest()
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         {
             _updateDefinitions = new List<UpdateDefinition<T>>();
             _updateDefinitionBuilder = Builders<T>.Update;
@@ -27,82 +19,102 @@ namespace Defender.Common.DB.Model
 
         public static UpdateModelRequest<T> Init(Guid modelId)
         {
-            return Init(new T() { Id = modelId });
+            return new UpdateModelRequest<T>()
+            {
+                _modelId = modelId
+            };
         }
 
         public static UpdateModelRequest<T> Init(T model)
         {
-            return new UpdateModelRequest<T>()
-            {
-                _modelId = model.Id,
-                _model = model,
-                _modelBackup = model.DeepClone()
-            };
+            return Init(model.Id);
         }
 
         public Guid ModelId => _modelId;
 
-        public UpdateModelRequest<T> CommitChanges()
-        {
-            _modelBackup = _model.DeepClone();
-
-            return this;
-        }
-
         public UpdateModelRequest<T> Clear()
         {
-            _model = _modelBackup.DeepClone();
             _updateDefinitions.Clear();
 
             return this;
         }
 
-        public UpdateModelRequest<T> UpdateFieldIfNotNull<FType>(Expression<Func<T, FType>> field, FType value)
+        public UpdateModelRequest<T> SetIfNotNull<FType>(
+            Expression<Func<T, FType>> field,
+            FType value)
         {
             var condition = () => value != null;
             if (value is string)
             {
-                condition = () => value != null && (!string.IsNullOrWhiteSpace(value as string));
+                condition = () =>
+                value != null
+                && (!string.IsNullOrWhiteSpace(value as string));
             }
 
-            return UpdateField(field, value, condition);
+            return Set(field, value, condition);
         }
 
-        public UpdateModelRequest<T> UpdateField<FType>(Expression<Func<T, FType>> field, FType value, Func<bool> condition)
+        public UpdateModelRequest<T> Set<FType>(
+            Expression<Func<T, FType>> field,
+            FType value,
+            Func<bool>? condition = null)
         {
-            if (condition())
-                return UpdateField(field, value);
-
-            return this;
+            return AddUpdateDefinition(field, value, condition, UpdateFieldType.Set);
         }
 
-        public UpdateModelRequest<T> UpdateField<FType>(Expression<Func<T, FType>> field, FType value)
+        public UpdateModelRequest<T> AddToSet<FType, EType>(
+            Expression<Func<T, FType>> field,
+            EType value)
         {
-            _updateDefinitions.Add(_updateDefinitionBuilder.Set(field, value));
-
-#pragma warning disable CS0168 // Variable is declared but never used
-            try
+            var condition = () => value != null;
+            if (value is string)
             {
-                if (_model != null)
-                {
-                    var property = _model.GetType().GetProperty(((MemberExpression)field.Body).Member.Name);
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
-                    var type = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
-                    var val = Convert.ChangeType(value, type);
-                    property.SetValue(_model, val, null);
-                }
+                condition = () =>
+                value != null
+                && (!string.IsNullOrWhiteSpace(value as string));
             }
-            catch (Exception e) { }
-#pragma warning restore CS0168 // Variable is declared but never used
 
-            return this;
+            return AddUpdateDefinition(field, value, condition, UpdateFieldType.AddToSet);
         }
+
 
         public UpdateDefinition<T> BuildUpdateDefinition()
         {
             return _updateDefinitionBuilder.Combine(_updateDefinitions);
         }
 
+        private UpdateModelRequest<T> AddUpdateDefinition<FType, VType>(
+            Expression<Func<T, FType>> field,
+            VType value,
+            Func<bool>? condition,
+            UpdateFieldType updateFieldType
+            )
+        {
+            if (condition != null && !condition())
+                return this;
+
+            UpdateDefinition<T>? updateDefinition = default;
+
+            switch (updateFieldType)
+            {
+                case UpdateFieldType.Set:
+
+                    if (value is FType fValue)
+                    {
+                        updateDefinition = _updateDefinitionBuilder
+                            .Set(field, fValue);
+                    }
+                    break;
+                case UpdateFieldType.AddToSet:
+                    updateDefinition = _updateDefinitionBuilder
+                        .AddToSet(new ExpressionFieldDefinition<T>(field), value);
+                    break;
+            }
+
+            if (updateDefinition != null)
+                _updateDefinitions.Add(updateDefinition);
+
+            return this;
+        }
     }
 }

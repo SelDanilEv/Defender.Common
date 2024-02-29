@@ -5,7 +5,7 @@ namespace Defender.Common.Exceptions;
 public class NotFoundException : ServiceException
 {
     public NotFoundException()
-        : base(ErrorCode.UnhandledError)
+        : base(ErrorCode.CM_NotFound)
     {
     }
 

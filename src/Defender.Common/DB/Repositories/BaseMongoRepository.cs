@@ -11,27 +11,22 @@ namespace Defender.Common.DB.Repositories;
 
 public abstract class BaseMongoRepository<Model> where Model : IBaseModel, new()
 {
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-    private static MongoClient client;
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-    private static IMongoDatabase database;
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-    protected IMongoCollection<Model> _mongoCollection;
+    protected readonly IMongoClient? _client;
+    protected readonly IMongoDatabase? _database;
+    protected readonly IMongoCollection<Model> _mongoCollection;
 
     protected BaseMongoRepository(MongoDbOptions mongoOption)
     {
-        client ??= new MongoClient(mongoOption.ConnectionString);
+        _client ??= new MongoClient(mongoOption.ConnectionString);
 
-        database ??= client.GetDatabase($"{mongoOption.Environment}_{mongoOption.AppName}");
+        _database ??= _client.GetDatabase(mongoOption.GetDatabaseName());
 
-        _mongoCollection = database.GetCollection<Model>(typeof(Model).Name);
+        _mongoCollection = _database.GetCollection<Model>(typeof(Model).Name);
     }
 
 
     protected virtual async Task<Model> GetItemAsync(Guid id)
     {
-#pragma warning disable CS0168 // Variable is declared but never used
         try
         {
             var filter = CreateIdFilter(id);
@@ -40,16 +35,14 @@ public abstract class BaseMongoRepository<Model> where Model : IBaseModel, new()
                 .Find(filter)
                 .FirstOrDefaultAsync();
         }
-        catch (Exception e)
+        catch (Exception)
         {
             throw new ServiceException(ErrorCode.CM_DatabaseIssue);
         }
-#pragma warning restore CS0168 // Variable is declared but never used
     }
 
     protected virtual async Task<Model> GetItemAsync(FindModelRequest<Model> request)
     {
-#pragma warning disable CS0168 // Variable is declared but never used
         try
         {
             return await _mongoCollection
@@ -57,27 +50,38 @@ public abstract class BaseMongoRepository<Model> where Model : IBaseModel, new()
                 .Sort(request.BuildSortDefinition())
                 .FirstOrDefaultAsync();
         }
-        catch (Exception e)
+        catch (Exception)
         {
             throw new ServiceException(ErrorCode.CM_DatabaseIssue);
         }
-#pragma warning restore CS0168 // Variable is declared but never used
+    }
+
+    protected virtual async Task<long> CountItemsAsync(FindModelRequest<Model> request)
+    {
+        try
+        {
+            return await _mongoCollection
+                .Find(request.BuildFilterDefinition())
+                .CountDocumentsAsync();
+        }
+        catch (Exception)
+        {
+            throw new ServiceException(ErrorCode.CM_DatabaseIssue);
+        }
     }
 
     protected virtual async Task<IList<Model>> GetItemsAsync()
     {
-#pragma warning disable CS0168 // Variable is declared but never used
         try
         {
             return await _mongoCollection
                 .Find(new BsonDocument())
                 .ToListAsync();
         }
-        catch (Exception e)
+        catch (Exception)
         {
             throw new ServiceException(ErrorCode.CM_DatabaseIssue);
         }
-#pragma warning restore CS0168 // Variable is declared but never used
     }
 
     protected virtual async Task<PagedResult<Model>> GetItemsAsync(
@@ -89,7 +93,6 @@ public abstract class BaseMongoRepository<Model> where Model : IBaseModel, new()
             PageSize = settings.PageSize,
         };
 
-#pragma warning disable CS0168 // Variable is declared but never used
         try
         {
             var query = _mongoCollection.Find(settings.Filter);
@@ -103,34 +106,37 @@ public abstract class BaseMongoRepository<Model> where Model : IBaseModel, new()
             result.TotalItemsCount = totalTask.Result;
             result.Items = itemsTask.Result;
         }
-        catch (Exception e)
+        catch (Exception)
         {
             throw new ServiceException(ErrorCode.CM_DatabaseIssue);
         }
-#pragma warning restore CS0168 // Variable is declared but never used
 
         return result;
     }
 
-    protected virtual async Task<Model> AddItemAsync(Model newModel)
+    protected virtual async Task<Model> AddItemAsync(
+        Model newModel,
+        IClientSessionHandle? session = null)
     {
-#pragma warning disable CS0168 // Variable is declared but never used
         try
         {
-            await _mongoCollection.InsertOneAsync(newModel);
+            if (session != null)
+                await _mongoCollection.InsertOneAsync(session, newModel);
+            else
+                await _mongoCollection.InsertOneAsync(newModel);
         }
-        catch (Exception e)
+        catch (Exception)
         {
             throw new ServiceException(ErrorCode.CM_DatabaseIssue);
         }
-#pragma warning restore CS0168 // Variable is declared but never used
 
         return newModel;
     }
 
-    protected virtual async Task<Model> UpdateItemAsync(UpdateModelRequest<Model> request)
+    protected virtual async Task<Model> UpdateItemAsync(
+        UpdateModelRequest<Model> request,
+        IClientSessionHandle? session = null)
     {
-#pragma warning disable CS0168 // Variable is declared but never used
         try
         {
             var filter = CreateIdFilter(request.ModelId);
@@ -141,50 +147,63 @@ public abstract class BaseMongoRepository<Model> where Model : IBaseModel, new()
                 IsUpsert = false
             };
 
-            return await _mongoCollection.FindOneAndUpdateAsync(
-                filter,
-                request.BuildUpdateDefinition(),
-                options);
+            if (session != null)
+                return await _mongoCollection.FindOneAndUpdateAsync(
+                    session,
+                    filter,
+                    request.BuildUpdateDefinition(),
+                    options);
+            else
+                return await _mongoCollection.FindOneAndUpdateAsync(
+                    filter,
+                    request.BuildUpdateDefinition(),
+                    options);
+
         }
-        catch (Exception e)
+        catch (Exception)
         {
             throw new ServiceException(ErrorCode.CM_DatabaseIssue);
         }
-#pragma warning restore CS0168 // Variable is declared but never used
     }
 
-    protected virtual async Task<Model> ReplaceItemAsync(Model updatedModel)
+    protected virtual async Task<Model> ReplaceItemAsync(
+        Model updatedModel,
+        IClientSessionHandle? session = null)
     {
-#pragma warning disable CS0168 // Variable is declared but never used
         try
         {
             var filter = CreateIdFilter(updatedModel.Id);
 
-            await _mongoCollection.ReplaceOneAsync(filter, updatedModel);
+            if (session != null)
+                await _mongoCollection.ReplaceOneAsync(session, filter, updatedModel);
+            else
+                await _mongoCollection.ReplaceOneAsync(filter, updatedModel);
         }
-        catch (Exception e)
+        catch (Exception)
         {
             throw new ServiceException(ErrorCode.CM_DatabaseIssue);
         }
-#pragma warning restore CS0168 // Variable is declared but never used
 
         return updatedModel;
     }
 
-    protected virtual async Task RemoveItemAsync(Guid id)
+    protected virtual async Task RemoveItemAsync(
+        Guid id,
+        IClientSessionHandle? session = null)
     {
-#pragma warning disable CS0168 // Variable is declared but never used
         try
         {
             var filter = CreateIdFilter(id);
 
-            await _mongoCollection.DeleteOneAsync(filter);
+            if (session != null)
+                await _mongoCollection.DeleteOneAsync(session, filter);
+            else
+                await _mongoCollection.DeleteOneAsync(filter);
         }
-        catch (Exception e)
+        catch (Exception)
         {
             throw new ServiceException(ErrorCode.CM_DatabaseIssue);
         }
-#pragma warning restore CS0168 // Variable is declared but never used
     }
 
     protected FilterDefinition<Model> CreateIdFilter(Guid id)

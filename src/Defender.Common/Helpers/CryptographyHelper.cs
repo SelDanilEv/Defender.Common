@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Defender.Common.Helpers;
 
-public class CryptographyHelper
+public static class CryptographyHelper
 {
     public static async Task<string> EncryptStringAsync(string plainText, string salt = "")
     {

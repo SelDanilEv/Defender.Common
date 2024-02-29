@@ -6,5 +6,6 @@
         public const int DefaultPaginationPageSize = 1000;
 
         public const string SecretManagementServiceMongoDBName = "Defender_SecretManagementService";
+        public const string IdentityServiceMongoDBName = "Defender_IdentityService";
     }
 }

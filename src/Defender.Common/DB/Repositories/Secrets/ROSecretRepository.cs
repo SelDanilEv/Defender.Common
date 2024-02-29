@@ -9,32 +9,12 @@ using Microsoft.Extensions.Options;
 
 namespace Defender.Common.DB.Repositories.Secrets;
 
-internal class SecretRepository : BaseMongoRepository<MongoSecret>, IMongoSecretAccessor
+internal class ROSecretRepository : BaseMongoRepository<MongoSecret>, IMongoSecretAccessor
 {
-    public SecretRepository(IOptions<MongoDbOptions> mongoOption)
+    public ROSecretRepository(IOptions<MongoDbOptions> mongoOption)
         : base(new MongoDbOptions(
             ConstValues.SecretManagementServiceMongoDBName, mongoOption?.Value!))
     {
-    }
-
-    public async Task<MongoSecret> CreateOrUpdateSecretAsync(string secretName, string value)
-    {
-        value = await CryptographyHelper.EncryptStringAsync(value, secretName);
-
-        var existingSecret = await GetSecretByNameAsync(secretName);
-
-        if (existingSecret == null)
-        {
-            var secret = MongoSecret.FromSecretName(secretName, value);
-
-            return await AddItemAsync(secret);
-        }
-
-        var updateRequest = UpdateModelRequest<MongoSecret>
-            .Init(existingSecret)
-            .UpdateField(x => x.Value, value);
-
-        return await UpdateItemAsync(updateRequest);
     }
 
     public async Task<string> GetSecretValueByNameAsync(string secretName)

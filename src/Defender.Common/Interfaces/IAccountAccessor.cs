@@ -1,9 +1,8 @@
-﻿using Defender.Common.DTOs;
+﻿using Defender.Common.Entities.AccountInfo;
 
 namespace Defender.Common.Interfaces;
 
 public interface IAccountAccessor
 {
-    AccountDto? AccountInfo { get; }
-    string Token { get; }
+    Task<BaseAccountInfo> GetAccountInfoById(Guid accountId);
 }

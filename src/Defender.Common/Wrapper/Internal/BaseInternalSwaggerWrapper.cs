@@ -19,7 +19,8 @@ namespace Defender.Common.Wrapper.Internal
 
         protected async Task<Result> ExecuteSafelyAsync<Result>(
             Func<Task<Result>> action,
-            AuthorizationType authorizationType = AuthorizationType.WithoutAuthorization)
+            AuthorizationType authorizationType = 
+                AuthorizationType.WithoutAuthorization)
         {
             await SetAuthorizationHeaderAsync(authorizationType);
 
@@ -28,18 +29,22 @@ namespace Defender.Common.Wrapper.Internal
 
         protected async Task ExecuteSafelyAsync(
             Func<Task> action,
-            AuthorizationType authorizationType = AuthorizationType.WithoutAuthorization)
+            AuthorizationType authorizationType = 
+                AuthorizationType.WithoutAuthorization)
         {
             await SetAuthorizationHeaderAsync(authorizationType);
 
             await base.ExecuteSafelyAsync(action);
         }
 
-        private async Task SetAuthorizationHeaderAsync(AuthorizationType authorizationType)
+        private async Task SetAuthorizationHeaderAsync(
+            AuthorizationType authorizationType)
         {
-            if (authorizationType == AuthorizationType.WithoutAuthorization) return;
+            if (authorizationType == AuthorizationType.WithoutAuthorization) 
+                return;
 
-            var headerValue = await _authenticationHeaderAccessor.GetAuthenticationHeader(authorizationType);
+            var headerValue = await _authenticationHeaderAccessor
+                .GetAuthenticationHeader(authorizationType);
 
             _client.SetAuthorizationHeader(headerValue);
         }
