@@ -28,28 +28,25 @@ internal class AuthorizationCheckingService : IAuthorizationCheckingService
         var targetAccount = await _accountAccessor
             .GetAccountInfoById(targetAccountId);
 
+        if (targetAccount == null)
+        {
+            throw new ServiceException(ErrorCode.CM_NotFound);
+        }
+
+        var currentUserId = _currentAccountAccessor.GetAccountId();
         var currentUserRoles = _currentAccountAccessor.GetRoles();
 
-        if (RolesHelper.IsSuperAdmin(currentUserRoles))
+        if (targetAccount.Id != currentUserId)
         {
-            if (targetAccount.IsSuperAdmin)
+            if (RolesHelper.IsSuperAdmin(currentUserRoles) && targetAccount.IsSuperAdmin)
             {
                 throw new ForbiddenAccessException(changingSuperAdminError);
             }
-        }
-        else if (RolesHelper.IsAdmin(currentUserRoles))
-        {
-            if (targetAccount.IsAdmin)
+            else if (RolesHelper.IsAdmin(currentUserRoles) && targetAccount.IsAdmin)
             {
                 throw new ForbiddenAccessException(changingAdminError);
             }
-        }
-        else
-        {
-            var currentUserId = _currentAccountAccessor
-                .GetAccountId();
-
-            if (targetAccount.Id != currentUserId)
+            else
             {
                 throw new ForbiddenAccessException();
             }

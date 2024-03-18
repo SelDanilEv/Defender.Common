@@ -15,13 +15,17 @@ public abstract class BaseMongoRepository<Model> where Model : IBaseModel, new()
     protected readonly IMongoDatabase? _database;
     protected readonly IMongoCollection<Model> _mongoCollection;
 
-    protected BaseMongoRepository(MongoDbOptions mongoOption)
+    protected BaseMongoRepository(
+        MongoDbOptions mongoOption,
+        string? collectionName = null)
     {
         _client ??= new MongoClient(mongoOption.ConnectionString);
 
         _database ??= _client.GetDatabase(mongoOption.GetDatabaseName());
 
-        _mongoCollection = _database.GetCollection<Model>(typeof(Model).Name);
+        collectionName ??= typeof(Model).Name;
+
+        _mongoCollection = _database.GetCollection<Model>(collectionName);
     }
 
 

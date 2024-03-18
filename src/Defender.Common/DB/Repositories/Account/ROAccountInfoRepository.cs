@@ -10,7 +10,8 @@ internal class ROAccountInfoRepository : BaseMongoRepository<BaseAccountInfo>, I
 {
     public ROAccountInfoRepository(IOptions<MongoDbOptions> mongoOption)
         : base(new MongoDbOptions(
-            ConstValues.IdentityServiceMongoDBName, mongoOption?.Value!))
+            ConstValues.IdentityServiceMongoDBName, mongoOption?.Value!),
+            typeof(BaseAccountInfo).Name.Replace("Base", ""))
     {
     }
 
