@@ -54,6 +54,7 @@ public enum ErrorCode
     BR_WLT_InvalidTransactionStatus,
     BR_WLT_WalletIsNotExist,
     BR_WLT_NotEnoughFunds,
+    BR_WLT_SenderAndRecipientAreTheSame,
 
 
     #endregion
@@ -141,6 +142,8 @@ public enum ErrorCode
 
 
     VL_WLT_EmptyTransactionId,
+    VL_WLT_EmptyWalletNumber,
+    VL_WLT_InvalidWalletNumber,
 
 
     #endregion
