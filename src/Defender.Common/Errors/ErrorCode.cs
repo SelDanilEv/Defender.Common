@@ -143,7 +143,10 @@ public enum ErrorCode
 
     VL_WLT_EmptyTransactionId,
     VL_WLT_EmptyWalletNumber,
+
     VL_WLT_InvalidWalletNumber,
+
+    VL_WLT_TransferAmountMustBePositive,
 
 
     #endregion
