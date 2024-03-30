@@ -64,11 +64,7 @@ public static class SecretsHelper
 
         if (cache.TryGetValue(key, out var cachedValue))
         {
-#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
-#pragma warning disable CS8603 // Possible null reference return.
-            return (string)cachedValue;
-#pragma warning restore CS8603 // Possible null reference return.
-#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
+            return (string)(cachedValue ?? String.Empty);
         }
 
         var value =

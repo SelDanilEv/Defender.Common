@@ -6,38 +6,28 @@ using System.Net.Http.Headers;
 
 namespace Defender.Common.Accessors;
 
-public class AuthenticationHeaderAccessor : IAuthenticationHeaderAccessor
-{
-    private readonly IConfiguration _configuration;
-    private readonly ICurrentAccountAccessor _accountAccessor;
-
-    public AuthenticationHeaderAccessor(
+public class AuthenticationHeaderAccessor(
         IConfiguration configuration,
         ICurrentAccountAccessor accountAccessor
-        )
-    {
-        _configuration = configuration;
-        _accountAccessor = accountAccessor;
-    }
-
+    ) : IAuthenticationHeaderAccessor
+{
     public async Task<AuthenticationHeaderValue> GetAuthenticationHeader(AuthorizationType authorizationType)
     {
         if (authorizationType == AuthorizationType.WithoutAuthorization) return DefaultAuthenticationHeader;
 
-        var schemaAndToken = _accountAccessor.Token?.Split(' ');
+        var schemaAndToken = accountAccessor.Token?.Split(' ');
 
-#pragma warning disable CS8604 // Possible null reference argument.
         var headerValue = authorizationType switch
         {
             AuthorizationType.Service => new AuthenticationHeaderValue(
                 "Bearer",
-                await InternalJwtHelper.GenerateInternalJWTAsync(_configuration["JwtTokenIssuer"])),
+                await InternalJwtHelper.GenerateInternalJWTAsync(
+                    configuration["JwtTokenIssuer"] ?? string.Empty)),
             AuthorizationType.User => schemaAndToken?.Length == 2
                 ? new AuthenticationHeaderValue(schemaAndToken[0], schemaAndToken[1])
                 : DefaultAuthenticationHeader,
             _ => DefaultAuthenticationHeader
         };
-#pragma warning restore CS8604 // Possible null reference argument.
 
         return headerValue;
     }

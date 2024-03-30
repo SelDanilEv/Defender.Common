@@ -1,5 +1,4 @@
 ﻿using Defender.Common.Errors;
-using System.Runtime.Serialization;
 
 namespace Defender.Common.Exceptions
 {
@@ -22,10 +21,6 @@ namespace Defender.Common.Exceptions
         }
 
         public ServiceException(string? message, Exception? innerException) : base(message, innerException)
-        {
-        }
-
-        protected ServiceException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
         }
     }

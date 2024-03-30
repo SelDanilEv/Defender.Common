@@ -2,130 +2,129 @@
 using MongoDB.Driver;
 using System.Linq.Expressions;
 
-namespace Defender.Common.DB.Model
+namespace Defender.Common.DB.Model;
+
+public class FindModelRequest<T> where T : IBaseModel, new()
 {
-    public class FindModelRequest<T> where T : IBaseModel, new()
+    private FilterDefinition<T> _filterDefinition;
+    private SortDefinition<T> _sortDefinition;
+
+    public FindModelRequest()
     {
-        private FilterDefinition<T> _filterDefinition;
-        private SortDefinition<T> _sortDefinition;
+        _filterDefinition = FilterDefinition<T>.Empty;
+        _sortDefinition = Builders<T>.Sort.Ascending(x=> x.Id);
+    }
 
-        public FindModelRequest()
+    public static FindModelRequest<T> Init()
+    {
+        return new FindModelRequest<T>();
+    }
+
+    public static FindModelRequest<T> Init<FType>(
+        Expression<Func<T, FType>> field,
+        FType value,
+        FilterType type = FilterType.Eq)
+    {
+        return new FindModelRequest<T>()
         {
-            _filterDefinition = FilterDefinition<T>.Empty;
-            _sortDefinition = Builders<T>.Sort.Ascending(x=> x.Id);
-        }
+            _filterDefinition = BuildFilterDefinition(field, value, type),
+        };
+    }
 
-        public static FindModelRequest<T> Init()
+    public FindModelRequest<T> Clear()
+    {
+        _filterDefinition = FilterDefinition<T>.Empty;
+
+        return this;
+    }
+
+    public FindModelRequest<T> And<FType>(
+        Expression<Func<T, FType>> field,
+        FType value,
+        FilterType type = FilterType.Eq)
+    {
+        _filterDefinition = Builders<T>.Filter.And(
+            _filterDefinition,
+            BuildFilterDefinition(field, value, type));
+
+        return this;
+    }
+
+    public FindModelRequest<T> And<FType>(FindModelRequest<T> request)
+    {
+        _filterDefinition = Builders<T>.Filter.And(
+            _filterDefinition,
+            request.BuildFilterDefinition());
+
+        return this;
+    }
+
+    public FindModelRequest<T> Or<FType>(
+        Expression<Func<T, FType>> field,
+        FType value,
+        FilterType type = FilterType.Eq)
+    {
+        _filterDefinition = Builders<T>.Filter.Or(
+            _filterDefinition,
+            BuildFilterDefinition(field, value, type));
+
+        return this;
+    }
+
+    public FindModelRequest<T> Or<FType>(FindModelRequest<T> request)
+    {
+        _filterDefinition = Builders<T>.Filter.Or(
+            _filterDefinition,
+            request.BuildFilterDefinition());
+
+        return this;
+    }
+
+    public FindModelRequest<T> Sort<FType>(
+        Expression<Func<T, FType>> field,
+        SortType type = SortType.Asc)
+    {
+        _sortDefinition = BuildSortDefinition(field, type);
+
+        return this;
+    }
+
+    public FilterDefinition<T> BuildFilterDefinition()
+    {
+        return _filterDefinition;
+    }
+
+    public SortDefinition<T> BuildSortDefinition()
+    {
+        return _sortDefinition;
+    }
+
+    private static FilterDefinition<T> BuildFilterDefinition<FType>(
+        Expression<Func<T, FType>> field,
+        FType value,
+        FilterType type)
+    {
+        return type switch
         {
-            return new FindModelRequest<T>();
-        }
+            FilterType.Eq => Builders<T>.Filter.Eq(field, value),
+            FilterType.Ne => Builders<T>.Filter.Ne(field, value),
+            FilterType.Gt => Builders<T>.Filter.Gt(field, value),
+            FilterType.Lt => Builders<T>.Filter.Lt(field, value),
+            _ => Builders<T>.Filter.Eq(field, value),
+        };
+    }
 
-        public static FindModelRequest<T> Init<FType>(
-            Expression<Func<T, FType>> field,
-            FType value,
-            FilterType type = FilterType.Eq)
+    private static SortDefinition<T> BuildSortDefinition<FType>(
+        Expression<Func<T, FType>> field,
+        SortType type)
+    {
+        var fieldDefinition = new ExpressionFieldDefinition<T>(field);
+
+        return type switch
         {
-            return new FindModelRequest<T>()
-            {
-                _filterDefinition = BuildFilterDefinition(field, value, type),
-            };
-        }
-
-        public FindModelRequest<T> Clear()
-        {
-            _filterDefinition = FilterDefinition<T>.Empty;
-
-            return this;
-        }
-
-        public FindModelRequest<T> And<FType>(
-            Expression<Func<T, FType>> field,
-            FType value,
-            FilterType type = FilterType.Eq)
-        {
-            _filterDefinition = Builders<T>.Filter.And(
-                _filterDefinition,
-                BuildFilterDefinition(field, value, type));
-
-            return this;
-        }
-
-        public FindModelRequest<T> And<FType>(FindModelRequest<T> request)
-        {
-            _filterDefinition = Builders<T>.Filter.And(
-                _filterDefinition,
-                request.BuildFilterDefinition());
-
-            return this;
-        }
-
-        public FindModelRequest<T> Or<FType>(
-            Expression<Func<T, FType>> field,
-            FType value,
-            FilterType type = FilterType.Eq)
-        {
-            _filterDefinition = Builders<T>.Filter.Or(
-                _filterDefinition,
-                BuildFilterDefinition(field, value, type));
-
-            return this;
-        }
-
-        public FindModelRequest<T> Or<FType>(FindModelRequest<T> request)
-        {
-            _filterDefinition = Builders<T>.Filter.Or(
-                _filterDefinition,
-                request.BuildFilterDefinition());
-
-            return this;
-        }
-
-        public FindModelRequest<T> Sort<FType>(
-            Expression<Func<T, FType>> field,
-            SortType type = SortType.Asc)
-        {
-            _sortDefinition = BuildSortDefinition(field, type);
-
-            return this;
-        }
-
-        public FilterDefinition<T> BuildFilterDefinition()
-        {
-            return _filterDefinition;
-        }
-
-        public SortDefinition<T> BuildSortDefinition()
-        {
-            return _sortDefinition;
-        }
-
-        private static FilterDefinition<T> BuildFilterDefinition<FType>(
-            Expression<Func<T, FType>> field,
-            FType value,
-            FilterType type)
-        {
-#pragma warning disable CS8524 // The switch expression does not handle some values of its input type (it is not exhaustive) involving an unnamed enum value.
-            return type switch
-            {
-                FilterType.Eq => Builders<T>.Filter.Eq(field, value),
-                FilterType.Ne => Builders<T>.Filter.Ne(field, value),
-                FilterType.Gt => Builders<T>.Filter.Gt(field, value),
-                FilterType.Lt => Builders<T>.Filter.Lt(field, value),
-            };
-#pragma warning restore CS8524 // The switch expression does not handle some values of its input type (it is not exhaustive) involving an unnamed enum value.
-        }
-
-        private static SortDefinition<T> BuildSortDefinition<FType>(
-            Expression<Func<T, FType>> field,
-            SortType type)
-        {
-            var fieldDefinition = new ExpressionFieldDefinition<T>(field);
-
-            return type switch
-            {
-                SortType.Asc => Builders<T>.Sort.Ascending(fieldDefinition),
-                SortType.Desc => Builders<T>.Sort.Descending(fieldDefinition),
-            };
-        }
+            SortType.Asc => Builders<T>.Sort.Ascending(fieldDefinition),
+            SortType.Desc => Builders<T>.Sort.Descending(fieldDefinition),
+            _ => Builders<T>.Sort.Ascending(fieldDefinition),
+        };
     }
 }

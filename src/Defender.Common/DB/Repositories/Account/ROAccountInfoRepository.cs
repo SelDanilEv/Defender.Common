@@ -6,14 +6,15 @@ using Microsoft.Extensions.Options;
 
 namespace Defender.Common.DB.Repositories.Account;
 
-internal class ROAccountInfoRepository : BaseMongoRepository<BaseAccountInfo>, IAccountAccessor
+internal class ROAccountInfoRepository(
+    IOptions<MongoDbOptions> mongoOption) 
+    : BaseMongoRepository<BaseAccountInfo>(
+        new MongoDbOptions(
+            ConstValues.IdentityServiceMongoDBName, 
+            mongoOption?.Value!),
+            typeof(BaseAccountInfo).Name.Replace("Base", "")),
+    IAccountAccessor
 {
-    public ROAccountInfoRepository(IOptions<MongoDbOptions> mongoOption)
-        : base(new MongoDbOptions(
-            ConstValues.IdentityServiceMongoDBName, mongoOption?.Value!),
-            typeof(BaseAccountInfo).Name.Replace("Base", ""))
-    {
-    }
 
     public async Task<BaseAccountInfo> GetAccountInfoById(Guid accountId)
     {

@@ -7,20 +7,14 @@ using Defender.Common.Helpers;
 
 namespace Defender.Common.Accessors;
 
-public class CurrentAccountAccessor : ICurrentAccountAccessor
+public class CurrentAccountAccessor(IHttpContextAccessor httpContextAccessor)
+    : ICurrentAccountAccessor
 {
-    private readonly IHttpContextAccessor _httpContextAccessor;
-
-    public CurrentAccountAccessor(IHttpContextAccessor httpContextAccessor)
-    {
-        _httpContextAccessor = httpContextAccessor;
-    }
-
     public Guid GetAccountId()
     {
-        var currentUserClaims = _httpContextAccessor.HttpContext?.User.Claims;
+        var currentUserClaims = httpContextAccessor.HttpContext?.User.Claims;
 
-        if (!Guid.TryParse(
+        if (currentUserClaims == null || !Guid.TryParse(
                 currentUserClaims
                 .FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?
                 .Value,
@@ -34,7 +28,7 @@ public class CurrentAccountAccessor : ICurrentAccountAccessor
 
     public List<string> GetRoles()
     {
-        var currentUserClaims = _httpContextAccessor.HttpContext?.User.Claims;
+        var currentUserClaims = httpContextAccessor.HttpContext?.User.Claims;
 
         if(currentUserClaims == null)
         {
@@ -52,11 +46,11 @@ public class CurrentAccountAccessor : ICurrentAccountAccessor
         return RolesHelper.GetHighestRole(GetRoles());
     }
 
-    public string Token
+    public string? Token
     {
         get
         {
-            return _httpContextAccessor?.HttpContext?.Request?.Headers?.Authorization;
+            return httpContextAccessor?.HttpContext?.Request?.Headers?.Authorization;
         }
     }
 }

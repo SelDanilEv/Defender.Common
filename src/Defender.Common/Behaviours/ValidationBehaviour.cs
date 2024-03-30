@@ -4,24 +4,22 @@ using MediatR;
 
 namespace Defender.Common.Behaviours;
 
-public class ValidationBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
-     where TRequest : IRequest<TResponse>
+public class ValidationBehaviour<TRequest, TResponse>(
+        IEnumerable<IValidator<TRequest>> validators)
+    : IPipelineBehavior<TRequest, TResponse>
+    where TRequest : IRequest<TResponse>
 {
-    private readonly IEnumerable<IValidator<TRequest>> _validators;
-
-    public ValidationBehaviour(IEnumerable<IValidator<TRequest>> validators)
+    public async Task<TResponse> Handle(
+        TRequest request, 
+        RequestHandlerDelegate<TResponse> next,
+        CancellationToken cancellationToken)
     {
-        _validators = validators;
-    }
-
-    public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
-    {
-        if (_validators.Any())
+        if (validators.Any())
         {
             var context = new ValidationContext<TRequest>(request);
 
             var validationResults = await Task.WhenAll(
-                _validators.Select(v =>
+                validators.Select(v =>
                     v.ValidateAsync(context, cancellationToken)));
 
             var failures = validationResults
@@ -31,11 +29,10 @@ public class ValidationBehaviour<TRequest, TResponse> : IPipelineBehavior<TReque
 
             if (failures.Any())
             {
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
-                var errorMessage = failures.Count > 0 ?
-                    failures.FirstOrDefault().ErrorMessage :
-                    ErrorCodeHelper.GetErrorCode(ErrorCode.Unknown);
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
+                var errorMessage = failures.Count > 0
+                    ? failures.FirstOrDefault()?.ErrorMessage
+                        ?? ErrorCodeHelper.GetErrorCode(ErrorCode.Unknown)
+                    : ErrorCodeHelper.GetErrorCode(ErrorCode.Unknown);
 
                 throw new Exceptions.ValidationException(errorMessage, failures);
             }
