@@ -99,9 +99,11 @@ public abstract class BaseMongoRepository<Model> where Model : IBaseModel, new()
 
         try
         {
-            var query = _mongoCollection.Find(settings.Filter);
+            var query = _mongoCollection
+                .Find(settings.Filter);
             var totalTask = query.CountDocumentsAsync();
             var itemsTask = query
+                .Sort(settings.Sort)
                 .Skip(settings.Offset)
                 .Limit(settings.PageSize)
                 .ToListAsync();
