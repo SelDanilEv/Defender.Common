@@ -101,12 +101,12 @@ namespace Defender.Common.Clients.Wallet
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<WalletDto> GetOrCreateAsync(GetOrCreateWalletCommand command);
+        System.Threading.Tasks.Task<WalletDto> GetOrCreateAsync(System.Guid? userId);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<WalletDto> GetOrCreateAsync(GetOrCreateWalletCommand command, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<WalletDto> GetOrCreateAsync(System.Guid? userId, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
@@ -116,6 +116,15 @@ namespace Defender.Common.Clients.Wallet
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<PublicWalletInfoDto> InfoByNumberAsync(int? walletNumber, System.Threading.CancellationToken cancellationToken);
+
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<WalletDto> InfoByNumber2Async(int? walletNumber);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<WalletDto> InfoByNumber2Async(int? walletNumber, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
@@ -947,15 +956,15 @@ namespace Defender.Common.Clients.Wallet
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<WalletDto> GetOrCreateAsync(GetOrCreateWalletCommand command)
+        public virtual System.Threading.Tasks.Task<WalletDto> GetOrCreateAsync(System.Guid? userId)
         {
-            return GetOrCreateAsync(command, System.Threading.CancellationToken.None);
+            return GetOrCreateAsync(userId, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<WalletDto> GetOrCreateAsync(GetOrCreateWalletCommand command, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<WalletDto> GetOrCreateAsync(System.Guid? userId, System.Threading.CancellationToken cancellationToken)
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -971,9 +980,9 @@ namespace Defender.Common.Clients.Wallet
                     // Operation Path: "api/Wallet/get-or-create"
                     urlBuilder_.Append("api/Wallet/get-or-create");
                     urlBuilder_.Append('?');
-                    if (command != null)
+                    if (userId != null)
                     {
-                        urlBuilder_.Append(System.Uri.EscapeDataString("command")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(command, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                        urlBuilder_.Append(System.Uri.EscapeDataString("UserId")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(userId, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
                     }
                     urlBuilder_.Length--;
 
@@ -1062,8 +1071,8 @@ namespace Defender.Common.Clients.Wallet
 
                     var urlBuilder_ = new System.Text.StringBuilder();
 
-                    // Operation Path: "api/Wallet/info-by-number"
-                    urlBuilder_.Append("api/Wallet/info-by-number");
+                    // Operation Path: "api/Wallet/public/info-by-number"
+                    urlBuilder_.Append("api/Wallet/public/info-by-number");
                     urlBuilder_.Append('?');
                     if (walletNumber != null)
                     {
@@ -1097,6 +1106,100 @@ namespace Defender.Common.Clients.Wallet
                         if (status_ == 200)
                         {
                             var objectResponse_ = await ReadObjectResponseAsync<PublicWalletInfoDto>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
+                        }
+                        else
+                        if (status_ == 500)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<ProblemDetails>("Server Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
+                            throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task<WalletDto> InfoByNumber2Async(int? walletNumber)
+        {
+            return InfoByNumber2Async(walletNumber, System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task<WalletDto> InfoByNumber2Async(int? walletNumber, System.Threading.CancellationToken cancellationToken)
+        {
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Method = new System.Net.Http.HttpMethod("GET");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
+
+                    var urlBuilder_ = new System.Text.StringBuilder();
+
+                    // Operation Path: "api/Wallet/private/info-by-number"
+                    urlBuilder_.Append("api/Wallet/private/info-by-number");
+                    urlBuilder_.Append('?');
+                    if (walletNumber != null)
+                    {
+                        urlBuilder_.Append(System.Uri.EscapeDataString("WalletNumber")).Append('=').Append(System.Uri.EscapeDataString(ConvertToString(walletNumber, System.Globalization.CultureInfo.InvariantCulture))).Append('&');
+                    }
+                    urlBuilder_.Length--;
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.IEnumerable<string>>();
+                        foreach (var item_ in response_.Headers)
+                            headers_[item_.Key] = item_.Value;
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 200)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<WalletDto>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -1434,7 +1537,7 @@ namespace Defender.Common.Clients.Wallet
     {
         [Newtonsoft.Json.JsonProperty("currency", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public Currency Currency { get; set; }
+        public AddCurrencyAccountCommandCurrency Currency { get; set; }
 
         [Newtonsoft.Json.JsonProperty("isDefault", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public bool IsDefault { get; set; }
@@ -1466,44 +1569,9 @@ namespace Defender.Common.Clients.Wallet
         [Newtonsoft.Json.JsonProperty("userId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.Guid UserId { get; set; }
 
-        [Newtonsoft.Json.JsonProperty("highestRole", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public string HighestRole { get; set; }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.7.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum ConfigurationLevel
-    {
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Hide")]
-        Hide = 0,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Admin")]
-        Admin = 1,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"All")]
-        All = 2,
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.7.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum Currency
-    {
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Unknown")]
-        Unknown = 0,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"USD")]
-        USD = 1,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"EUR")]
-        EUR = 2,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"GEL")]
-        GEL = 3,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"PLN")]
-        PLN = 4,
+        [Newtonsoft.Json.JsonProperty("highestRole", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
+        public AuthCheckDtoHighestRole HighestRole { get; set; }
 
     }
 
@@ -1512,19 +1580,13 @@ namespace Defender.Common.Clients.Wallet
     {
         [Newtonsoft.Json.JsonProperty("currency", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public Currency Currency { get; set; }
+        public CurrencyAccountCurrency Currency { get; set; }
 
         [Newtonsoft.Json.JsonProperty("balance", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public int Balance { get; set; }
 
         [Newtonsoft.Json.JsonProperty("isDefault", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public bool IsDefault { get; set; }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.7.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class GetOrCreateWalletCommand
-    {
 
     }
 
@@ -1575,7 +1637,7 @@ namespace Defender.Common.Clients.Wallet
         public int WalletNumber { get; set; }
 
         [Newtonsoft.Json.JsonProperty("currencies", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore, ItemConverterType = typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public System.Collections.Generic.ICollection<Currency> Currencies { get; set; }
+        public System.Collections.Generic.ICollection<Currencies> Currencies { get; set; }
 
     }
 
@@ -1584,7 +1646,7 @@ namespace Defender.Common.Clients.Wallet
     {
         [Newtonsoft.Json.JsonProperty("currency", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public Currency Currency { get; set; }
+        public SetDefaultCurrencyAccountCommandCurrency Currency { get; set; }
 
     }
 
@@ -1596,7 +1658,7 @@ namespace Defender.Common.Clients.Wallet
 
         [Newtonsoft.Json.JsonProperty("currency", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public Currency Currency { get; set; }
+        public StartPaymentTransactionCommandCurrency Currency { get; set; }
 
         [Newtonsoft.Json.JsonProperty("comment", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Comment { get; set; }
@@ -1614,7 +1676,7 @@ namespace Defender.Common.Clients.Wallet
 
         [Newtonsoft.Json.JsonProperty("currency", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public Currency Currency { get; set; }
+        public StartRechargeTransactionCommandCurrency Currency { get; set; }
 
         [Newtonsoft.Json.JsonProperty("comment", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Comment { get; set; }
@@ -1632,7 +1694,7 @@ namespace Defender.Common.Clients.Wallet
 
         [Newtonsoft.Json.JsonProperty("currency", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public Currency Currency { get; set; }
+        public StartTransferTransactionCommandCurrency Currency { get; set; }
 
         [Newtonsoft.Json.JsonProperty("comment", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public string Comment { get; set; }
@@ -1650,15 +1712,15 @@ namespace Defender.Common.Clients.Wallet
 
         [Newtonsoft.Json.JsonProperty("transactionStatus", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public TransactionStatus TransactionStatus { get; set; }
+        public TransactionDtoTransactionStatus TransactionStatus { get; set; }
 
         [Newtonsoft.Json.JsonProperty("transactionType", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public TransactionType TransactionType { get; set; }
+        public TransactionDtoTransactionType TransactionType { get; set; }
 
         [Newtonsoft.Json.JsonProperty("currency", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public Currency Currency { get; set; }
+        public TransactionDtoCurrency Currency { get; set; }
 
         [Newtonsoft.Json.JsonProperty("amount", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public int Amount { get; set; }
@@ -1701,6 +1763,56 @@ namespace Defender.Common.Clients.Wallet
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.7.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class WalletDto
+    {
+        [Newtonsoft.Json.JsonProperty("walletNumber", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public int WalletNumber { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("currencyAccounts", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<CurrencyAccount> CurrencyAccounts { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("ownerId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Guid OwnerId { get; set; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.7.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum ConfigurationLevel
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Hide")]
+        Hide = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Admin")]
+        Admin = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"All")]
+        All = 2,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.7.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum AddCurrencyAccountCommandCurrency
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Unknown")]
+        Unknown = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"USD")]
+        USD = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"EUR")]
+        EUR = 2,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"GEL")]
+        GEL = 3,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"PLN")]
+        PLN = 4,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.7.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public enum TransactionStatus
     {
 
@@ -1710,8 +1822,8 @@ namespace Defender.Common.Clients.Wallet
         [System.Runtime.Serialization.EnumMember(Value = @"Failed")]
         Failed = 1,
 
-        [System.Runtime.Serialization.EnumMember(Value = @"Procced")]
-        Procced = 2,
+        [System.Runtime.Serialization.EnumMember(Value = @"Proceed")]
+        Proceed = 2,
 
     }
 
@@ -1734,16 +1846,200 @@ namespace Defender.Common.Clients.Wallet
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.7.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class WalletDto
+    public enum AuthCheckDtoHighestRole
     {
-        [Newtonsoft.Json.JsonProperty("walletNumber", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public int WalletNumber { get; set; }
 
-        [Newtonsoft.Json.JsonProperty("currencyAccounts", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.Collections.Generic.ICollection<CurrencyAccount> CurrencyAccounts { get; set; }
+        [System.Runtime.Serialization.EnumMember(Value = @"Guest")]
+        Guest = 0,
 
-        [Newtonsoft.Json.JsonProperty("ownerId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.Guid OwnerId { get; set; }
+        [System.Runtime.Serialization.EnumMember(Value = @"User")]
+        User = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Admin")]
+        Admin = 2,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"SuperAdmin")]
+        SuperAdmin = 3,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.7.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum CurrencyAccountCurrency
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Unknown")]
+        Unknown = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"USD")]
+        USD = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"EUR")]
+        EUR = 2,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"GEL")]
+        GEL = 3,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"PLN")]
+        PLN = 4,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.7.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum Currencies
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Unknown")]
+        Unknown = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"USD")]
+        USD = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"EUR")]
+        EUR = 2,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"GEL")]
+        GEL = 3,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"PLN")]
+        PLN = 4,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.7.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum SetDefaultCurrencyAccountCommandCurrency
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Unknown")]
+        Unknown = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"USD")]
+        USD = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"EUR")]
+        EUR = 2,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"GEL")]
+        GEL = 3,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"PLN")]
+        PLN = 4,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.7.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum StartPaymentTransactionCommandCurrency
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Unknown")]
+        Unknown = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"USD")]
+        USD = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"EUR")]
+        EUR = 2,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"GEL")]
+        GEL = 3,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"PLN")]
+        PLN = 4,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.7.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum StartRechargeTransactionCommandCurrency
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Unknown")]
+        Unknown = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"USD")]
+        USD = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"EUR")]
+        EUR = 2,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"GEL")]
+        GEL = 3,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"PLN")]
+        PLN = 4,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.7.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum StartTransferTransactionCommandCurrency
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Unknown")]
+        Unknown = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"USD")]
+        USD = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"EUR")]
+        EUR = 2,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"GEL")]
+        GEL = 3,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"PLN")]
+        PLN = 4,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.7.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum TransactionDtoTransactionStatus
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Queued")]
+        Queued = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Failed")]
+        Failed = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Proceed")]
+        Proceed = 2,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.7.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum TransactionDtoTransactionType
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Unknown")]
+        Unknown = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Recharge")]
+        Recharge = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Transfer")]
+        Transfer = 2,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Payment")]
+        Payment = 3,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.7.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum TransactionDtoCurrency
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"Unknown")]
+        Unknown = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"USD")]
+        USD = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"EUR")]
+        EUR = 2,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"GEL")]
+        GEL = 3,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"PLN")]
+        PLN = 4,
 
     }
 

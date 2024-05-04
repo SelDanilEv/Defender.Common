@@ -1,4 +1,4 @@
-﻿namespace Defender.Common.Models;
+﻿namespace Defender.Common.Consts;
 
 public static class Roles
 {

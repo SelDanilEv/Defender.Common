@@ -1,3 +1,5 @@
-﻿namespace Defender.Common.DTOs;
+﻿using Defender.Common.Enums;
 
-public record AuthCheckDto(Guid UserId, string HighestRole);
+namespace Defender.Common.DTOs;
+
+public record AuthCheckDto(Guid UserId, Role HighestRole);

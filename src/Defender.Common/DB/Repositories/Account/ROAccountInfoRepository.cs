@@ -1,5 +1,5 @@
 ﻿using Defender.Common.Configuration.Options;
-using Defender.Common.Contst;
+using Defender.Common.Consts;
 using Defender.Common.Entities.AccountInfo;
 using Defender.Common.Interfaces;
 using Microsoft.Extensions.Options;

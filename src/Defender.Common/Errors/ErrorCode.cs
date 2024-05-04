@@ -11,6 +11,7 @@ public enum ErrorCode
 
     #region Identity service
 
+    BR_ACC,
     BR_ACC_InvalidPassword,
     BR_ACC_AdminCannotChangeAdminPassword,
     BR_ACC_UserCanUpdateOnlyOwnAccount,
@@ -22,12 +23,14 @@ public enum ErrorCode
     BR_ACC_AccessCodeWasAlreadyUsed,
     BR_ACC_CodeWasNotVerified,
     BR_ACC_InvalidAccessCode,
+    BR_ACC_CodeTypeMismatch,
 
     #endregion Identity service
 
 
     #region User management service
 
+    BR_USM,
     BR_USM_EmailAddressInUse,
     BR_USM_PhoneNumberInUse,
     BR_USM_NicknameInUse,
@@ -46,6 +49,7 @@ public enum ErrorCode
     #region Wallet service
 
 
+    BR_WLT,
     BR_WLT_CurrencyAccountAlredyExist,
     BR_WLT_CurrencyAccountIsNotExist,
     BR_WLT_SenderCurrencyAccountIsNotExist,
@@ -83,6 +87,7 @@ public enum ErrorCode
     VL_USM_EmptyLogin,
     VL_USM_EmptyNickname,
     VL_USM_EmptyEmail,
+    VL_USM_EmptyAccessCode,
 
     VL_USM_InvalidPhoneNumber,
     VL_USM_InvalidEmail,
@@ -105,6 +110,7 @@ public enum ErrorCode
     VL_ACC_EmptyUserId,
     VL_ACC_EmptyNickname,
     VL_ACC_EmptyPassword,
+    VL_ACC_EmptyAccessCode,
 
     VL_ACC_MinPasswordLength,
     VL_ACC_MaxPasswordLength,

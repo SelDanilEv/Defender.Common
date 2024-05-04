@@ -1,4 +1,4 @@
-﻿using Defender.Common.Contst;
+﻿using Defender.Common.Consts;
 
 namespace Defender.Common.DB.Pagination;
 

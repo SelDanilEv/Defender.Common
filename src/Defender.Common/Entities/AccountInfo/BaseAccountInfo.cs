@@ -1,4 +1,5 @@
-﻿using Defender.Common.Helpers;
+﻿using Defender.Common.Enums;
+using Defender.Common.Helpers;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace Defender.Common.Entities.AccountInfo;
@@ -19,5 +20,5 @@ public record BaseAccountInfo : IBaseModel
 
     public bool HasRole(string role) => RolesHelper.HasRole(Roles, role);
 
-    public string GetHighestRole() => RolesHelper.GetHighestRole(Roles);
+    public Role GetHighestRole() => RolesHelper.GetHighestRole(Roles);
 }

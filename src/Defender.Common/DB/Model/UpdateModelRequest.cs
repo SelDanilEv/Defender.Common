@@ -1,5 +1,6 @@
 ﻿using Defender.Common.Entities;
 using MongoDB.Driver;
+using System.Collections;
 using System.Linq.Expressions;
 
 namespace Defender.Common.DB.Model;
@@ -49,6 +50,12 @@ public class UpdateModelRequest<T> where T : IBaseModel, new()
             condition = () =>
             value != null
             && (!string.IsNullOrWhiteSpace(value as string));
+        }
+        if (value is ICollection)
+        {
+            condition = () =>
+            value != null
+            && ((value as ICollection).Count != 0);
         }
 
         return Set(field, value, condition);

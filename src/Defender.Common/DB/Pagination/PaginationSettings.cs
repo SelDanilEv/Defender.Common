@@ -1,4 +1,4 @@
-﻿using Defender.Common.Contst;
+﻿using Defender.Common.Consts;
 using Defender.Common.DB.Model;
 using Defender.Common.Entities;
 using MongoDB.Driver;
@@ -12,7 +12,7 @@ public record PaginationSettings<T> where T : IBaseModel, new()
     public FilterDefinition<T> Filter { get; set; } = FilterDefinition<T>.Empty;
     public SortDefinition<T> Sort { get; set; } = Builders<T>.Sort.Ascending(x => x.Id);
 
-    public int Offset => (Page - 1) * PageSize;
+    public int Offset => Page * PageSize;
 
     public static PaginationSettings<T> DefaultRequest()
     {
@@ -23,7 +23,7 @@ public record PaginationSettings<T> where T : IBaseModel, new()
     {
         return new PaginationSettings<T>
         {
-            Page = request.Page > 0 ? request.Page : ConstValues.DefaultPaginationStartPage,
+            Page = request.Page >= 0 ? request.Page : ConstValues.DefaultPaginationStartPage,
             PageSize = request.PageSize > 0 ? request.PageSize : ConstValues.DefaultPaginationPageSize,
         };
     }

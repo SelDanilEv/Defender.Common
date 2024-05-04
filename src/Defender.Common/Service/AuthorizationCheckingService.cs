@@ -1,59 +1,73 @@
-﻿using Defender.Common.Errors;
+﻿using Defender.Common.Enums;
+using Defender.Common.Errors;
 using Defender.Common.Exceptions;
-using Defender.Common.Helpers;
 using Defender.Common.Interfaces;
 
 namespace Defender.Common.Service;
 
-internal class AuthorizationCheckingService : IAuthorizationCheckingService
-{
-    private readonly ICurrentAccountAccessor _currentAccountAccessor;
-    private readonly IAccountAccessor _accountAccessor;
-
-    public AuthorizationCheckingService(
+internal class AuthorizationCheckingService(
         ICurrentAccountAccessor currentAccountAccessor,
-        IAccountAccessor accountAccessor)
-    {
-        _currentAccountAccessor = currentAccountAccessor;
-        _accountAccessor = accountAccessor;
-    }
+        IAccountAccessor accountAccessor) 
+    : IAuthorizationCheckingService
+{
 
-    public async Task<T> RunWithAuthAsync<T>(
+    public async Task<T> ExecuteWithAuthCheckAsync<T>(
         Guid targetAccountId,
         Func<Task<T>> action,
-        ErrorCode changingSuperAdminError = ErrorCode.CM_ForbiddenAccess,
-        ErrorCode changingAdminError = ErrorCode.CM_ForbiddenAccess
-        )
+        bool requireSuperAdmin = false,
+        ErrorCode errorCode = ErrorCode.CM_ForbiddenAccess)
     {
-        var targetAccount = await _accountAccessor
-            .GetAccountInfoById(targetAccountId);
+        var targetAccount = await accountAccessor.GetAccountInfoById(targetAccountId);
 
         if (targetAccount == null)
         {
             throw new ServiceException(ErrorCode.CM_NotFound);
         }
 
-        var currentUserId = _currentAccountAccessor.GetAccountId();
-        var currentUserRoles = _currentAccountAccessor.GetRoles();
+        var currentUserId = currentAccountAccessor.GetAccountId();
+        var currentUserRole = currentAccountAccessor.GetHighestRole();
 
-        if (targetAccount.Id != currentUserId)
+        if (targetAccount.Id == currentUserId
+            || currentUserRole == Role.SuperAdmin
+            || currentUserRole == Role.Admin
+                && !(requireSuperAdmin || targetAccount.IsAdmin))
         {
-            if (RolesHelper.IsSuperAdmin(currentUserRoles) && targetAccount.IsSuperAdmin)
-            {
-                throw new ForbiddenAccessException(changingSuperAdminError);
-            }
-            else if (RolesHelper.IsAdmin(currentUserRoles) && targetAccount.IsAdmin)
-            {
-                throw new ForbiddenAccessException(changingAdminError);
-            }
-            else
-            {
-                throw new ForbiddenAccessException();
-            }
+            return await action();
         }
 
-        return await action();
+        throw new ForbiddenAccessException(errorCode);
     }
 
+    public async Task<T> ExecuteBasedOnUserRoleAsync<T>(
+        Func<Task<T>>? superAdminAction = null,
+        Func<Task<T>>? adminAction = null,
+        Func<Task<T>>? userAction = null)
+    {
+        var currentUserRole = currentAccountAccessor.GetHighestRole();
+
+        switch (currentUserRole)
+        {
+            case Role.SuperAdmin:
+                if (superAdminAction != null)
+                {
+                    return await superAdminAction();
+                }
+                break;
+            case Role.Admin:
+                if (adminAction != null)
+                {
+                    return await adminAction();
+                }
+                break;
+            case Role.User:
+                if (userAction != null)
+                {
+                    return await userAction();
+                }
+                break;
+        }
+
+        return default(T);
+    }
 
 }

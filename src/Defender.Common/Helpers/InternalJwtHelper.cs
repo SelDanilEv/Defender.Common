@@ -1,5 +1,5 @@
-﻿using Defender.Common.Enums;
-using Defender.Common.Models;
+﻿using Defender.Common.Consts;
+using Defender.Common.Enums;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -9,7 +9,7 @@ namespace Defender.Common.Helpers;
 
 public static class InternalJwtHelper
 {
-    public static async Task<string> GenerateInternalJWTAsync(string issuer)
+    public static async Task<string> GenerateInternalJWTAsync(string issuer, int expiresMinutes = 1)
     {
         var claims = new List<Claim>{
                     new Claim(
@@ -29,7 +29,7 @@ public static class InternalJwtHelper
           issuer,
           null,
           claims,
-          expires: DateTime.Now.AddMinutes(1),
+          expires: DateTime.Now.AddMinutes(expiresMinutes),
           signingCredentials: creds);
 
         return new JwtSecurityTokenHandler().WriteToken(token);

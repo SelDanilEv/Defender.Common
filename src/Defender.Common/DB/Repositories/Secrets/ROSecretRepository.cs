@@ -1,5 +1,5 @@
 ﻿using Defender.Common.Configuration.Options;
-using Defender.Common.Contst;
+using Defender.Common.Consts;
 using Defender.Common.DB.Model;
 using Defender.Common.Entities.Secrets;
 using Defender.Common.Helpers;
