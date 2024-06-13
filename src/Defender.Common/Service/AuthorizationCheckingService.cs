@@ -67,7 +67,7 @@ internal class AuthorizationCheckingService(
                 break;
         }
 
-        return default(T);
+        throw new ServiceException(ErrorCode.CM_ForbiddenAccess);
     }
 
 }

@@ -8,7 +8,9 @@ public static class ConfigurePortalApiClient
         this IServiceCollection services, 
         Action<IServiceProvider, HttpClient> configureClient)
     {
-        services.AddHttpClient<IPortalApiClient, PortalApiClient>(nameof(PortalApiClient), configureClient);
+        services.AddHttpClient<IPortalApiClient, PortalApiClient>(
+            nameof(PortalApiClient),
+            configureClient);
     }
 
 }

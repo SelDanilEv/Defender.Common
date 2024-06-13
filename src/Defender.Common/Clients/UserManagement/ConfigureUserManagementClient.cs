@@ -8,7 +8,8 @@ public static class ConfigureUserManagementClient
         this IServiceCollection services, 
         Action<IServiceProvider, HttpClient> configureClient)
     {
-        services.AddHttpClient<IUserManagementServiceClient, UserManagementServiceClient>(nameof(UserManagementServiceClient), configureClient);
+        services.AddHttpClient<IUserManagementServiceClient, UserManagementServiceClient>(
+            nameof(UserManagementServiceClient), configureClient);
     }
 
 }

@@ -50,7 +50,7 @@ public enum ErrorCode
 
 
     BR_WLT,
-    BR_WLT_CurrencyAccountAlredyExist,
+    BR_WLT_CurrencyAccountAlreadyExist,
     BR_WLT_CurrencyAccountIsNotExist,
     BR_WLT_SenderCurrencyAccountIsNotExist,
     BR_WLT_RecipientCurrencyAccountIsNotExist,
@@ -59,6 +59,7 @@ public enum ErrorCode
     BR_WLT_WalletIsNotExist,
     BR_WLT_NotEnoughFunds,
     BR_WLT_SenderAndRecipientAreTheSame,
+    BR_WLT_TransactionCanNotBeCanceled,
 
 
     #endregion
@@ -69,6 +70,21 @@ public enum ErrorCode
     BR_PTL_UserActivityMustHaveUserId,
 
     #endregion Portal
+
+
+    #region Risk games service
+
+    BR_RGS_UnsupportedTransactionType,
+    BR_RGS_UnsupportedGameType,
+    BR_RGS_InvalidPaymentRequest,
+    BR_RGS_InvalidTransactionAmount,
+    BR_RGS_LotteryIsStillActive,
+    BR_RGS_LotteryDrawIsNotActive,
+    BR_RGS_CurrencyIsNotAllowed,
+    BR_RGS_TryingToPurchaseInvalidTickets,
+    BR_RGS_ThisBetIsNotAllowed,
+
+    #endregion
 
 
     #endregion
@@ -174,7 +190,17 @@ public enum ErrorCode
     VL_WLT_EmptyUserId,
 
 
-    #endregion 
+    #endregion
+
+
+    #region Risk games service
+
+    VL_RGS_InvalidDrawNumber,
+    VL_RGS_InvalidTicketNumber,
+    VL_RGS_InvalidAmount,
+    VL_RGS_AmountOfTicketsMustBePositive,
+
+    #endregion
 
 
     #endregion Validation

@@ -1,9 +1,9 @@
 ﻿using MediatR;
 using Microsoft.Extensions.Logging;
 
-namespace Defender.Common.Behaviours;
+namespace Defender.Common.Behaviors;
 
-public class UnhandledExceptionBehaviour<TRequest, TResponse> (
+public class UnhandledExceptionBehavior<TRequest, TResponse> (
         ILogger<TRequest> logger)
     : IPipelineBehavior<TRequest, TResponse> where TRequest : IRequest<TResponse>
 {

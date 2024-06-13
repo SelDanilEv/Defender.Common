@@ -8,7 +8,8 @@ using Defender.Common.Enums;
 
 namespace Defender.Common.Accessors;
 
-public class CurrentAccountAccessor(IHttpContextAccessor httpContextAccessor)
+public class CurrentAccountAccessor(
+    IHttpContextAccessor httpContextAccessor)
     : ICurrentAccountAccessor
 {
     public Guid GetAccountId()
@@ -33,7 +34,7 @@ public class CurrentAccountAccessor(IHttpContextAccessor httpContextAccessor)
 
         if(currentUserClaims == null)
         {
-            return new List<string>();
+            return [];
         }
 
         return currentUserClaims

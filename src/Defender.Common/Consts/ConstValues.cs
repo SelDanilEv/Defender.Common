@@ -2,6 +2,8 @@
 
 internal class ConstValues
 {
+    public const string SharedDatabaseName = "Shared";
+
     public const int DefaultPaginationStartPage = 0;
     public const int DefaultPaginationPageSize = 1000;
 

@@ -9,7 +9,8 @@ namespace Defender.Common.Helpers;
 
 public static class InternalJwtHelper
 {
-    public static async Task<string> GenerateInternalJWTAsync(string issuer, int expiresMinutes = 1)
+    public static async Task<string> GenerateInternalJWTAsync(
+        string issuer, int expiresMinutes = 1)
     {
         var claims = new List<Claim>{
                     new Claim(

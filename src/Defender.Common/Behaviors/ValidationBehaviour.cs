@@ -1,16 +1,17 @@
 ﻿using Defender.Common.Errors;
 using FluentValidation;
+using Defender.Common.Extension;
 using MediatR;
 
-namespace Defender.Common.Behaviours;
+namespace Defender.Common.Behaviors;
 
-public class ValidationBehaviour<TRequest, TResponse>(
+public class ValidationBehavior<TRequest, TResponse>(
         IEnumerable<IValidator<TRequest>> validators)
     : IPipelineBehavior<TRequest, TResponse>
     where TRequest : IRequest<TResponse>
 {
     public async Task<TResponse> Handle(
-        TRequest request, 
+        TRequest request,
         RequestHandlerDelegate<TResponse> next,
         CancellationToken cancellationToken)
     {

@@ -5,5 +5,7 @@ public enum FilterType
     Eq,
     Ne,
     Gt,
+    Gte,
     Lt,
+    Lte,
 }

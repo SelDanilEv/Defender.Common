@@ -7,12 +7,12 @@ namespace Defender.Common.DB.Model;
 public class FindModelRequest<T> where T : IBaseModel, new()
 {
     private FilterDefinition<T> _filterDefinition;
-    private SortDefinition<T> _sortDefinition;
+    private SortDefinition<T>? _sortDefinition;
 
     public FindModelRequest()
     {
         _filterDefinition = FilterDefinition<T>.Empty;
-        _sortDefinition = Builders<T>.Sort.Ascending(x=> x.Id);
+        _sortDefinition = null;
     }
 
     public static FindModelRequest<T> Init()
@@ -84,8 +84,10 @@ public class FindModelRequest<T> where T : IBaseModel, new()
         Expression<Func<T, FType>> field,
         SortType type = SortType.Asc)
     {
-        _sortDefinition = BuildSortDefinition(field, type);
-
+        var newSortDefinition = BuildSortDefinition(field, type);
+        _sortDefinition = _sortDefinition == null 
+            ? newSortDefinition 
+            : Builders<T>.Sort.Combine(_sortDefinition, newSortDefinition);
         return this;
     }
 
@@ -96,7 +98,7 @@ public class FindModelRequest<T> where T : IBaseModel, new()
 
     public SortDefinition<T> BuildSortDefinition()
     {
-        return _sortDefinition;
+        return _sortDefinition ?? Builders<T>.Sort.Ascending(x => x.Id);
     }
 
     private static FilterDefinition<T> BuildFilterDefinition<FType>(
@@ -109,7 +111,9 @@ public class FindModelRequest<T> where T : IBaseModel, new()
             FilterType.Eq => Builders<T>.Filter.Eq(field, value),
             FilterType.Ne => Builders<T>.Filter.Ne(field, value),
             FilterType.Gt => Builders<T>.Filter.Gt(field, value),
+            FilterType.Gte => Builders<T>.Filter.Gte(field, value),
             FilterType.Lt => Builders<T>.Filter.Lt(field, value),
+            FilterType.Lte => Builders<T>.Filter.Lte(field, value),
             _ => Builders<T>.Filter.Eq(field, value),
         };
     }

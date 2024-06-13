@@ -14,8 +14,13 @@ public class UpdateModelRequest<T> where T : IBaseModel, new()
 
     private UpdateModelRequest()
     {
-        _updateDefinitions = new List<UpdateDefinition<T>>();
+        _updateDefinitions = [];
         _updateDefinitionBuilder = Builders<T>.Update;
+    }
+
+    public static UpdateModelRequest<T> Init()
+    {
+        return new UpdateModelRequest<T>();
     }
 
     public static UpdateModelRequest<T> Init(Guid modelId)
@@ -55,7 +60,7 @@ public class UpdateModelRequest<T> where T : IBaseModel, new()
         {
             condition = () =>
             value != null
-            && ((value as ICollection).Count != 0);
+            && (((ICollection)value).Count != 0);
         }
 
         return Set(field, value, condition);

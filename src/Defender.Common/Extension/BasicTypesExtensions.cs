@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace Defender.Common.Exstension;
+namespace Defender.Common.Extension;
 
 public static class BasicTypesExtensions
 {

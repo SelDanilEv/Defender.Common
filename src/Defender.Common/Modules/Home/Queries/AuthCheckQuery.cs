@@ -11,12 +11,14 @@ public class AuthCheckQueryHandler(
     ICurrentAccountAccessor currentAccountAccessor
     ) : IRequestHandler<AuthCheckQuery, AuthCheckDto>
 {
-    public Task<AuthCheckDto> Handle(AuthCheckQuery request, CancellationToken cancellationToken)
+    public Task<AuthCheckDto> Handle(
+        AuthCheckQuery request, CancellationToken cancellationToken)
     {
         var userId = currentAccountAccessor.GetAccountId();
         var userRoles = currentAccountAccessor.GetRoles();
 
-        return Task.FromResult(new AuthCheckDto(userId, RolesHelper.GetHighestRole(userRoles)));
+        return Task.FromResult(new AuthCheckDto(
+            userId, RolesHelper.GetHighestRole(userRoles)));
     }
 
 }

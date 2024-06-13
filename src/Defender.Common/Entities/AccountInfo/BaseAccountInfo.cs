@@ -10,7 +10,7 @@ public record BaseAccountInfo : IBaseModel
     [BsonId]
     public Guid Id { get; set; }
 
-    public List<string> Roles { get; set; } = new List<string>();
+    public List<string> Roles { get; set; } = [];
 
     [BsonIgnore]
     public bool IsAdmin => RolesHelper.IsAdmin(Roles);

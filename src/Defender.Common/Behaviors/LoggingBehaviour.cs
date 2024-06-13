@@ -2,10 +2,10 @@
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 
-namespace Defender.Common.Behaviours;
+namespace Defender.Common.Behaviors;
 
-public class LoggingBehaviour<TRequest, TResponse>(
-        ILogger<LoggingBehaviour<TRequest, TResponse>> logger) : 
+public class LoggingBehavior<TRequest, TResponse>(
+        ILogger<LoggingBehavior<TRequest, TResponse>> logger) : 
     IPipelineBehavior<TRequest, TResponse> where TRequest : IRequest<TResponse>
 {
     public async Task<TResponse> Handle(

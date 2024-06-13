@@ -8,7 +8,8 @@ public static class ConfigureWalletClient
         this IServiceCollection services, 
         Action<IServiceProvider, HttpClient> configureClient)
     {
-        services.AddHttpClient<IWalletServiceClient, WalletServiceClient>(nameof(WalletServiceClient), configureClient);
+        services.AddHttpClient<IWalletServiceClient, WalletServiceClient>(
+            nameof(WalletServiceClient), configureClient);
     }
 
 }

@@ -11,9 +11,11 @@ public class AuthenticationHeaderAccessor(
         ICurrentAccountAccessor accountAccessor
     ) : IAuthenticationHeaderAccessor
 {
-    public async Task<AuthenticationHeaderValue> GetAuthenticationHeader(AuthorizationType authorizationType)
+    public async Task<AuthenticationHeaderValue> GetAuthenticationHeader(
+        AuthorizationType authorizationType)
     {
-        if (authorizationType == AuthorizationType.WithoutAuthorization) return DefaultAuthenticationHeader;
+        if (authorizationType == AuthorizationType.WithoutAuthorization) 
+            return DefaultAuthenticationHeader;
 
         var schemaAndToken = accountAccessor.Token?.Split(' ');
 
@@ -32,5 +34,6 @@ public class AuthenticationHeaderAccessor(
         return headerValue;
     }
 
-    private AuthenticationHeaderValue DefaultAuthenticationHeader => new AuthenticationHeaderValue("Bearer");
+    private static AuthenticationHeaderValue DefaultAuthenticationHeader => 
+        new("Bearer");
 }

@@ -5,7 +5,8 @@ namespace Defender.Common.Wrapper
 {
     public abstract class BaseSwaggerWrapper
     {
-        protected virtual async Task<Result> ExecuteSafelyAsync<Result>(Func<Task<Result>> action)
+        protected virtual async Task<Result> ExecuteSafelyAsync<Result>(
+            Func<Task<Result>> action)
         {
             try
             {
@@ -18,6 +19,19 @@ namespace Defender.Common.Wrapper
             catch (Exception ex)
             {
                 throw new ServiceException(ErrorCode.UnhandledError, ex);
+            }
+        }
+
+        protected virtual async Task<Result> ExecuteUnsafelyAsync<Result>(
+            Func<Task<Result>> action)
+        {
+            try
+            {
+                return await action();
+            }
+            catch (Exception)
+            {
+                throw;
             }
         }
 
@@ -34,6 +48,18 @@ namespace Defender.Common.Wrapper
             catch (Exception ex)
             {
                 throw new ServiceException(ErrorCode.UnhandledError, ex);
+            }
+        }
+
+        protected virtual async Task ExecuteUnsafelyAsync(Func<Task> action)
+        {
+            try
+            {
+                await action();
+            }
+            catch (Exception)
+            {
+                throw;
             }
         }
     }

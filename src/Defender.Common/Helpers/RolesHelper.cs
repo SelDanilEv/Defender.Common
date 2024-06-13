@@ -6,13 +6,13 @@ namespace Defender.Common.Helpers;
 public static class RolesHelper
 {
     private static readonly List<string> SuperAdminRoles =
-        new List<string> { Roles.SuperAdmin, Roles.Admin, Roles.User, Roles.Guest };
+        [Roles.SuperAdmin, Roles.Admin, Roles.User, Roles.Guest];
     private static readonly List<string> AdminRoles =
-        new List<string> { Roles.Admin, Roles.User, Roles.Guest };
+        [Roles.Admin, Roles.User, Roles.Guest];
     private static readonly List<string> UserRoles =
-        new List<string> { Roles.User, Roles.Guest };
+        [Roles.User, Roles.Guest];
     private static readonly List<string> GuestRoles =
-        new List<string> { Roles.Guest };
+        [Roles.Guest];
 
     public static bool IsAdmin(List<string> roles) =>
         roles.Contains(Roles.SuperAdmin) || roles.Contains(Roles.Admin);

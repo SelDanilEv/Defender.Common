@@ -29,6 +29,21 @@ public abstract class BaseMongoRepository<Model> where Model : IBaseModel, new()
     }
 
 
+    protected virtual async Task<long> CountItemsAsync(
+        FindModelRequest<Model>? request = null)
+    {
+        try
+        {
+            return await _mongoCollection
+                .Find(request?.BuildFilterDefinition() ?? new BsonDocument())
+                .CountDocumentsAsync();
+        }
+        catch (Exception ex)
+        {
+            throw new ServiceException(ErrorCode.CM_DatabaseIssue, ex);
+        }
+    }
+
     protected virtual async Task<Model> GetItemAsync(Guid id)
     {
         try
@@ -39,9 +54,9 @@ public abstract class BaseMongoRepository<Model> where Model : IBaseModel, new()
                 .Find(filter)
                 .FirstOrDefaultAsync();
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            throw new ServiceException(ErrorCode.CM_DatabaseIssue);
+            throw new ServiceException(ErrorCode.CM_DatabaseIssue, ex);
         }
     }
 
@@ -52,39 +67,27 @@ public abstract class BaseMongoRepository<Model> where Model : IBaseModel, new()
             return await _mongoCollection
                 .Find(request.BuildFilterDefinition())
                 .Sort(request.BuildSortDefinition())
+                .Limit(1)
                 .FirstOrDefaultAsync();
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            throw new ServiceException(ErrorCode.CM_DatabaseIssue);
+            throw new ServiceException(ErrorCode.CM_DatabaseIssue, ex);
         }
     }
 
-    protected virtual async Task<long> CountItemsAsync(FindModelRequest<Model> request)
+    protected virtual async Task<IList<Model>> GetItemsAsync(
+        FindModelRequest<Model>? request = null)
     {
         try
         {
             return await _mongoCollection
-                .Find(request.BuildFilterDefinition())
-                .CountDocumentsAsync();
-        }
-        catch (Exception)
-        {
-            throw new ServiceException(ErrorCode.CM_DatabaseIssue);
-        }
-    }
-
-    protected virtual async Task<IList<Model>> GetItemsAsync()
-    {
-        try
-        {
-            return await _mongoCollection
-                .Find(new BsonDocument())
+                .Find(request?.BuildFilterDefinition() ?? new BsonDocument())
                 .ToListAsync();
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            throw new ServiceException(ErrorCode.CM_DatabaseIssue);
+            throw new ServiceException(ErrorCode.CM_DatabaseIssue, ex);
         }
     }
 
@@ -112,9 +115,9 @@ public abstract class BaseMongoRepository<Model> where Model : IBaseModel, new()
             result.TotalItemsCount = totalTask.Result;
             result.Items = itemsTask.Result;
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            throw new ServiceException(ErrorCode.CM_DatabaseIssue);
+            throw new ServiceException(ErrorCode.CM_DatabaseIssue, ex);
         }
 
         return result;
@@ -131,9 +134,9 @@ public abstract class BaseMongoRepository<Model> where Model : IBaseModel, new()
             else
                 await _mongoCollection.InsertOneAsync(newModel);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            throw new ServiceException(ErrorCode.CM_DatabaseIssue);
+            throw new ServiceException(ErrorCode.CM_DatabaseIssue, ex);
         }
 
         return newModel;
@@ -166,9 +169,9 @@ public abstract class BaseMongoRepository<Model> where Model : IBaseModel, new()
                     options);
 
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            throw new ServiceException(ErrorCode.CM_DatabaseIssue);
+            throw new ServiceException(ErrorCode.CM_DatabaseIssue, ex);
         }
     }
 
@@ -185,9 +188,9 @@ public abstract class BaseMongoRepository<Model> where Model : IBaseModel, new()
             else
                 await _mongoCollection.ReplaceOneAsync(filter, updatedModel);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            throw new ServiceException(ErrorCode.CM_DatabaseIssue);
+            throw new ServiceException(ErrorCode.CM_DatabaseIssue, ex);
         }
 
         return updatedModel;
@@ -206,9 +209,9 @@ public abstract class BaseMongoRepository<Model> where Model : IBaseModel, new()
             else
                 await _mongoCollection.DeleteOneAsync(filter);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            throw new ServiceException(ErrorCode.CM_DatabaseIssue);
+            throw new ServiceException(ErrorCode.CM_DatabaseIssue, ex);
         }
     }
 

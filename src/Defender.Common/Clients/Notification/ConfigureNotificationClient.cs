@@ -8,6 +8,7 @@ public static class ConfigureNotificationClient
         this IServiceCollection services, 
         Action<IServiceProvider, HttpClient> configureClient)
     {
-        services.AddHttpClient<INotificationServiceClient, NotificationServiceClient>(nameof(NotificationServiceClient), configureClient);
+        services.AddHttpClient<INotificationServiceClient, NotificationServiceClient>(
+            nameof(NotificationServiceClient), configureClient);
     }
 }

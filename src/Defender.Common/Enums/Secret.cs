@@ -5,4 +5,6 @@ public enum Secret
     JwtSecret,
     MongoDBConnectionString,
     SecretsEncryptionKey,
+    SharedROConnectionString,
+    SharedAdminConnectionString,
 }

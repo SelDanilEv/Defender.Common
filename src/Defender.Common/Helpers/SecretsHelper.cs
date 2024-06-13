@@ -1,16 +1,15 @@
 ﻿using Defender.Common.Enums;
 using Defender.Common.Interfaces;
 using Microsoft.Extensions.Caching.Memory;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Defender.Common.Helpers;
 
 public static class SecretsHelper
 {
     private const string EnvironmentVariablePrefix = "Defender_App_";
-    private const int CacheExpirationMintures = 5;
+    private const int CacheExpirationMinutes = 5;
 
-    private static readonly MemoryCache cache = new MemoryCache(new MemoryCacheOptions());
+    private static readonly MemoryCache cache = new(new MemoryCacheOptions());
 
     private static IMongoSecretAccessor? _mongoSecretAccessor;
 
@@ -19,18 +18,46 @@ public static class SecretsHelper
         _mongoSecretAccessor = mongoSecretAccessor;
     }
 
+
+    #region Sync
+    public static string GetSecretSync(Secret envVariable, bool useMongo = false)
+    {
+        return GetSecretSync(envVariable.ToString(), useMongo);
+    }
+
+    public static string GetSecretSync(string envVariable, bool useMongo = false)
+    {
+        return GetSecretAsync(envVariable, useMongo).GetAwaiter().GetResult();
+    }
+    #endregion
+
     public static async Task<string> GetSecretAsync(Secret envVariable)
     {
         return await GetSecretAsync(envVariable.ToString());
     }
 
-    public static async Task<string> GetSecretAsync(string key)
+    public static async Task<string> GetSecretAsync(string key, bool useMongoSecrets = true)
     {
+        if (string.IsNullOrWhiteSpace(key))
+        {
+            return string.Empty;
+        }
+
+        if (cache.TryGetValue(key, out var cachedValue))
+        {
+            return (string)(cachedValue ?? String.Empty);
+        }
+
         var secret = GetSecretFromEnvVariables(key);
 
-        if (string.IsNullOrWhiteSpace(secret))
+        if (string.IsNullOrWhiteSpace(secret) && useMongoSecrets)
         {
             secret = await GetSecretFromMongoSecrets(key);
+        }
+
+        if (!string.IsNullOrWhiteSpace(secret))
+        {
+            cache.Set(key, secret, DateTime.UtcNow.AddMinutes(CacheExpirationMinutes));
         }
 
         return secret;
@@ -45,60 +72,28 @@ public static class SecretsHelper
 
         var secret = await _mongoSecretAccessor.GetSecretValueByNameAsync(key);
 
-        if (!string.IsNullOrWhiteSpace(secret))
-        {
-            cache.Set(key, secret, DateTime.UtcNow.AddMinutes(CacheExpirationMintures));
-        }
-
         return secret;
     }
 
     private static string GetSecretFromEnvVariables(string key)
     {
-        if (string.IsNullOrWhiteSpace(key))
-        {
-            return string.Empty;
-        }
-
-        key = MapEnvVariableToKey(key);
-
-        if (cache.TryGetValue(key, out var cachedValue))
-        {
-            return (string)(cachedValue ?? String.Empty);
-        }
+        var envVariableKey = MapEnvVariableToKey(key);
 
         var value =
-            Environment.GetEnvironmentVariable(key, EnvironmentVariableTarget.Process) ??
-            Environment.GetEnvironmentVariable(key, EnvironmentVariableTarget.User) ??
-            Environment.GetEnvironmentVariable(key, EnvironmentVariableTarget.Machine);
+            Environment.GetEnvironmentVariable(envVariableKey, EnvironmentVariableTarget.Process) ??
+            Environment.GetEnvironmentVariable(envVariableKey, EnvironmentVariableTarget.User) ??
+            Environment.GetEnvironmentVariable(envVariableKey, EnvironmentVariableTarget.Machine);
 
         if (value == null)
         {
             return string.Empty;
         }
 
-        cache.Set(key, value, DateTime.UtcNow.AddMinutes(5));
+        cache.Set(key, value, DateTime.UtcNow.AddMinutes(CacheExpirationMinutes));
 
         return value;
     }
 
     private static string MapEnvVariableToKey(string envVariable) =>
         EnvironmentVariablePrefix + envVariable;
-
-
-    #region Sync - no mongo secrets
-    [SuppressMessage("Usage", "Use this method only in contructors (only env variables secrets)")]
-    public static string GetSecretSync(Secret envVariable)
-    {
-        return GetSecretFromEnvVariables(envVariable.ToString());
-    }
-
-    [SuppressMessage("Usage", "Use this method only in contructors (only env variables secrets)")]
-    public static string GetSecretSync(string envVariable)
-    {
-        var secret = GetSecretFromEnvVariables(envVariable);
-
-        return secret;
-    }
-    #endregion
 }

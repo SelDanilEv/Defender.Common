@@ -1,5 +1,5 @@
 ﻿using Defender.Common.Accessors;
-using Defender.Common.Behaviours;
+using Defender.Common.Behaviors;
 using Defender.Common.Configuration.Options;
 using Defender.Common.DB.Repositories.Account;
 using Defender.Common.DB.Repositories.Secrets;
@@ -12,7 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 
-namespace Defender.Common.Exstension;
+namespace Defender.Common.Extension;
 
 public static class CommonServiceExtensions
 {
@@ -41,9 +41,9 @@ public static class CommonServiceExtensions
         services.PostConfigure<MongoDbOptions>(options =>
         {
             options.ConnectionString = SecretsHelper
-            .GetSecretAsync(Secret.MongoDBConnectionString)
-            .GetAwaiter()
-            .GetResult();
+                .GetSecretAsync(Secret.MongoDBConnectionString)
+                .GetAwaiter()
+                .GetResult();
         });
 
         return services;
@@ -51,9 +51,9 @@ public static class CommonServiceExtensions
 
     private static IServiceCollection AddCommonPipelines(this IServiceCollection services)
     {
-        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingBehaviour<,>));
-        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(UnhandledExceptionBehaviour<,>));
-        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
+        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
+        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(UnhandledExceptionBehavior<,>));
+        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
 
@@ -72,13 +72,13 @@ public static class CommonServiceExtensions
     {
         services.AddSingleton<IMongoSecretAccessor, ROSecretRepository>();
 
-        var mongoSecretAccesor = services
+        var mongoSecretAccessor = services
             .BuildServiceProvider()
             .GetRequiredService<IMongoSecretAccessor>();
 
-        if (mongoSecretAccesor != null)
+        if (mongoSecretAccessor != null)
         {
-            SecretsHelper.Initialize(mongoSecretAccesor);
+            SecretsHelper.Initialize(mongoSecretAccessor);
         }
 
         return services;

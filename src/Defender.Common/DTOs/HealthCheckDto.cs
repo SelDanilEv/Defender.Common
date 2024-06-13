@@ -1,3 +1,3 @@
 ﻿namespace Defender.Common.DTOs;
 
-public record HealthCheckDto(string status);
+public record HealthCheckDto(string Status);
