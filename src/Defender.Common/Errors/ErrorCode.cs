@@ -80,6 +80,7 @@ public enum ErrorCode
     BR_RGS_InvalidTransactionAmount,
     BR_RGS_LotteryIsStillActive,
     BR_RGS_LotteryDrawIsNotActive,
+    BR_RGS_TicketPurchaseNotAllowed,
     BR_RGS_CurrencyIsNotAllowed,
     BR_RGS_TryingToPurchaseInvalidTickets,
     BR_RGS_ThisBetIsNotAllowed,

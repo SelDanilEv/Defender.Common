@@ -2,7 +2,7 @@
 using Defender.Common.Enums;
 using Defender.Common.Helpers;
 
-namespace Defender.Common.DB.SharedStorage.MessageBroker;
+namespace Defender.Common.DB.SharedStorage.Options;
 
 public record TransactionStatusesTopicConsumerOptions
     : TransactionStatusesTopicBaseOptions

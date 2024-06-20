@@ -2,38 +2,42 @@
 
 public enum UIErrorCodes
 {
-    Error_UnhandledError,
-    Error_ForbiddenAccess,
+    UnhandledError,
+    ForbiddenAccess,
+    AuthorizationFailed,
 
-    Error_SessionExpired,
+    SessionExpired,
 
-    Error_EmptyLogin,
-    Error_EmptyEmail,
-    Error_EmptyNickname,
-    Error_EmptyPassword,
-    Error_EmptyWalletNumber,
+    EmptyLogin,
+    EmptyEmail,
+    EmptyNickname,
+    EmptyPassword,
+    EmptyWalletNumber,
 
-    Error_InvalidEmail,
-    Error_InvalidPhoneNumber,
-    Error_InvalidLoginOrPassword,
-    Error_InvalidWalletNumber,
-    Error_WalletAccountNotFound,
+    InvalidEmail,
+    InvalidPhoneNumber,
+    InvalidLoginOrPassword,
+    InvalidWalletNumber,
 
-    Error_PasswordIsTooShort,
-    Error_PasswordIsTooLong,
+    PasswordIsTooShort,
+    PasswordIsTooLong,
 
-    Error_EmailAddressInUse,
-    Error_PhoneNumberInUse,
-    Error_NicknameInUse,
+    EmailAddressInUse,
+    PhoneNumberInUse,
+    NicknameInUse,
 
-    Error_NicknameIsTooShort,
-    Error_NicknameIsTooLong,
+    NicknameIsTooShort,
+    NicknameIsTooLong,
 
-    Error_AccessCodeWasExpired,
-    Error_AccessCodeWasAlreadyUsed,
-    Error_InvalidAccessCode,
+    AccessCodeWasExpired,
+    AccessCodeWasAlreadyUsed,
+    InvalidAccessCode,
 
-    Error_WalletIsNotExist,
+    UserBlocked,
 
-    Error_UserBlocked,
+    WalletIsNotExist,
+    SenderAndRecipientAreTheSame,
+    RecipientCurrencyAccountIsNotExist,
+    NotEnoughFunds,
+    CurrencyAccountNotFound,
 }

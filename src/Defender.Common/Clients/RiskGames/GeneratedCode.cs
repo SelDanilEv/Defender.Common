@@ -1656,6 +1656,9 @@ namespace Defender.Common.Clients.RiskGames
         [Newtonsoft.Json.JsonProperty("coefficients", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.Collections.Generic.ICollection<int> Coefficients { get; set; }
 
+        [Newtonsoft.Json.JsonProperty("allowedBets", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public System.Collections.Generic.ICollection<int> AllowedBets { get; set; }
+
         [Newtonsoft.Json.JsonProperty("allowedCurrencies", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore, ItemConverterType = typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
         public System.Collections.Generic.ICollection<allowedCurrencies> AllowedCurrencies { get; set; }
 
@@ -1664,6 +1667,9 @@ namespace Defender.Common.Clients.RiskGames
 
         [Newtonsoft.Json.JsonProperty("maxBetValue", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public int MaxBetValue { get; set; }
+
+        [Newtonsoft.Json.JsonProperty("isCustomBetAllowed", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public bool IsCustomBetAllowed { get; set; }
 
         [Newtonsoft.Json.JsonProperty("minTicketNumber", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public int MinTicketNumber { get; set; }
