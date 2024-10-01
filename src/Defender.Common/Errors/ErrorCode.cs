@@ -204,6 +204,17 @@ public enum ErrorCode
     #endregion
 
 
+    #region Budget tracker service
+
+    VL_BTS_InvalidPositionName,
+    VL_BTS_InvalidCurrency,
+
+    VL_BTS_NumberOfPositionsMustBePositive,
+
+    VL_BTS_NumberOfLatestMonthsMustBePositive,
+
+    #endregion
+
     #endregion Validation
 
 
@@ -213,6 +224,8 @@ public enum ErrorCode
     ES_GoogleAPIIssue,
     ES_SendinBlueIssue,
     ES_WalutomatIssue,
+
+    ERAPI_RatesAreNotAvailable,
 
 
     #endregion

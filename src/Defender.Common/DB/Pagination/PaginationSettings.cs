@@ -5,19 +5,19 @@ using MongoDB.Driver;
 
 namespace Defender.Common.DB.Pagination;
 
-public record PaginationSettings<T> where T : IBaseModel, new()
+public record PaginationSettings<T> : PaginationRequest where T : IBaseModel, new()
 {
-    public int Page { get; set; } = ConstValues.DefaultPaginationStartPage;
-    public int PageSize { get; set; } = ConstValues.DefaultPaginationPageSize;
     public FilterDefinition<T> Filter { get; set; } = FilterDefinition<T>.Empty;
     public SortDefinition<T> Sort { get; set; } = Builders<T>.Sort.Ascending(x => x.Id);
 
     public int Offset => Page * PageSize;
 
-    public static PaginationSettings<T> DefaultRequest()
+    private static PaginationSettings<T> DefaultRequest()
     {
         return new PaginationSettings<T>();
     }
+
+    public static PaginationSettings<T> WithoutPagination() => DefaultRequest();
 
     public static PaginationSettings<T> FromPaginationRequest(PaginationRequest request)
     {

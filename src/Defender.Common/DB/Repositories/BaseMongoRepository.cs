@@ -142,14 +142,30 @@ public abstract class BaseMongoRepository<Model> where Model : IBaseModel, new()
         return newModel;
     }
 
+    #region Update
+
     protected virtual async Task<Model> UpdateItemAsync(
         UpdateModelRequest<Model> request,
         IClientSessionHandle? session = null)
     {
+        return await UpdateItemAsync(request, CreateIdFilter(request.ModelId), session);
+    }
+
+    protected virtual async Task<Model> UpdateItemAsync(
+        UpdateModelRequest<Model> request,
+        FindModelRequest<Model> filter,
+        IClientSessionHandle? session = null)
+    {
+        return await UpdateItemAsync(request, filter.BuildFilterDefinition(), session);
+    }
+
+    protected virtual async Task<Model> UpdateItemAsync(
+        UpdateModelRequest<Model> request,
+        FilterDefinition<Model> filter,
+        IClientSessionHandle? session = null)
+    {
         try
         {
-            var filter = CreateIdFilter(request.ModelId);
-
             var options = new FindOneAndUpdateOptions<Model>
             {
                 ReturnDocument = ReturnDocument.After,
@@ -175,18 +191,44 @@ public abstract class BaseMongoRepository<Model> where Model : IBaseModel, new()
         }
     }
 
+    #endregion Update
+
+    #region Replace
+
     protected virtual async Task<Model> ReplaceItemAsync(
         Model updatedModel,
         IClientSessionHandle? session = null)
     {
+        return await ReplaceItemAsync(updatedModel, CreateIdFilter(updatedModel.Id), session);
+    }
+
+    protected virtual async Task<Model> ReplaceItemAsync(
+        Model updatedModel,
+        FindModelRequest<Model> replaceFilter,
+        IClientSessionHandle? session = null)
+    {
+        if(updatedModel.Id == Guid.Empty)
+        {
+            var existingModel = await GetItemAsync(replaceFilter);
+            updatedModel.Id = existingModel?.Id ?? Guid.NewGuid();
+        }
+
+        return await ReplaceItemAsync(updatedModel, replaceFilter.BuildFilterDefinition(), session);
+    }
+
+    protected virtual async Task<Model> ReplaceItemAsync(
+        Model updatedModel,
+        FilterDefinition<Model> filter,
+        IClientSessionHandle? session = null)
+    {
+        var options = new ReplaceOptions { IsUpsert = true, };
+
         try
         {
-            var filter = CreateIdFilter(updatedModel.Id);
-
             if (session != null)
-                await _mongoCollection.ReplaceOneAsync(session, filter, updatedModel);
+                await _mongoCollection.ReplaceOneAsync(session, filter, updatedModel, options);
             else
-                await _mongoCollection.ReplaceOneAsync(filter, updatedModel);
+                await _mongoCollection.ReplaceOneAsync(filter, updatedModel, options);
         }
         catch (Exception ex)
         {
@@ -196,14 +238,33 @@ public abstract class BaseMongoRepository<Model> where Model : IBaseModel, new()
         return updatedModel;
     }
 
+    #endregion
+
+    #region Remove
+
+
     protected virtual async Task RemoveItemAsync(
         Guid id,
         IClientSessionHandle? session = null)
     {
+        await RemoveItemAsync(id, CreateIdFilter(id), session);
+    }
+
+    protected virtual async Task RemoveItemAsync(
+        Guid id,
+        FindModelRequest<Model> removeFilter,
+        IClientSessionHandle? session = null)
+    {
+        await RemoveItemAsync(id, removeFilter.BuildFilterDefinition(), session);
+    }
+
+    protected virtual async Task RemoveItemAsync(
+        Guid id,
+        FilterDefinition<Model> filter,
+        IClientSessionHandle? session = null)
+    {
         try
         {
-            var filter = CreateIdFilter(id);
-
             if (session != null)
                 await _mongoCollection.DeleteOneAsync(session, filter);
             else
@@ -214,6 +275,8 @@ public abstract class BaseMongoRepository<Model> where Model : IBaseModel, new()
             throw new ServiceException(ErrorCode.CM_DatabaseIssue, ex);
         }
     }
+
+    #endregion
 
     protected FilterDefinition<Model> CreateIdFilter(Guid id)
     {

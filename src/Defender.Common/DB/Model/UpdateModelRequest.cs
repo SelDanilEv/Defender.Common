@@ -56,12 +56,6 @@ public class UpdateModelRequest<T> where T : IBaseModel, new()
             value != null
             && (!string.IsNullOrWhiteSpace(value as string));
         }
-        if (value is ICollection)
-        {
-            condition = () =>
-            value != null
-            && (((ICollection)value).Count != 0);
-        }
 
         return Set(field, value, condition);
     }
