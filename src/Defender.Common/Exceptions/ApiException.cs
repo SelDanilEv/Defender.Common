@@ -4,11 +4,11 @@ using Microsoft.AspNetCore.Mvc;
 namespace Defender.Common.Exceptions;
 
 public partial class ApiException(
-    string message, 
-    int statusCode, 
-    string response, 
+    string message,
+    int statusCode,
+    string response,
     IReadOnlyDictionary<string, IEnumerable<string>> headers,
-    Exception innerException) 
+    Exception innerException)
     : ServiceException(
         message + "\n\nStatus: " + statusCode + "\nResponse: \n" + ((response == null) ? "(null)" : response.Substring(0, response.Length >= 512 ? 512 : response.Length)), innerException)
 {
@@ -42,11 +42,11 @@ public partial class ApiException(
 }
 
 public partial class ApiException<TResult>(
-    string message, 
+    string message,
     int statusCode,
-    string response, 
-    IReadOnlyDictionary<string, IEnumerable<string>> headers, 
-    TResult result, Exception innerException) 
+    string response,
+    IReadOnlyDictionary<string, IEnumerable<string>> headers,
+    TResult result, Exception innerException)
     : ApiException(message, statusCode, response, headers, innerException)
 {
     public TResult Result { get; private set; } = result;

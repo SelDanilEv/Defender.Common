@@ -5,12 +5,12 @@ using System.Diagnostics;
 namespace Defender.Common.Behaviors;
 
 public class LoggingBehavior<TRequest, TResponse>(
-        ILogger<LoggingBehavior<TRequest, TResponse>> logger) : 
+        ILogger<LoggingBehavior<TRequest, TResponse>> logger) :
     IPipelineBehavior<TRequest, TResponse> where TRequest : IRequest<TResponse>
 {
     public async Task<TResponse> Handle(
         TRequest request,
-        RequestHandlerDelegate<TResponse> next, 
+        RequestHandlerDelegate<TResponse> next,
         CancellationToken cancellationToken)
     {
         logger.LogInformation($"Sending a request {typeof(TRequest).Name}");

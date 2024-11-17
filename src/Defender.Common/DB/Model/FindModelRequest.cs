@@ -85,8 +85,8 @@ public class FindModelRequest<T> where T : IBaseModel, new()
         SortType type = SortType.Asc)
     {
         var newSortDefinition = BuildSortDefinition(field, type);
-        _sortDefinition = _sortDefinition == null 
-            ? newSortDefinition 
+        _sortDefinition = _sortDefinition == null
+            ? newSortDefinition
             : Builders<T>.Sort.Combine(_sortDefinition, newSortDefinition);
         return this;
     }

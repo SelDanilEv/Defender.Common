@@ -10,7 +10,7 @@ public record PagedResult<T>
 
     public static PagedResult<N> FromPagedResult<N>(
         PagedResult<T> pagedResult,
-        Func<T,N> mapper
+        Func<T, N> mapper
         )
     {
         return new PagedResult<N>

@@ -51,7 +51,7 @@ namespace Defender.Common.Wrapper.Internal
         private async Task SetAuthorizationHeaderAsync(
             AuthorizationType authorizationType)
         {
-            if (authorizationType == AuthorizationType.WithoutAuthorization) 
+            if (authorizationType == AuthorizationType.WithoutAuthorization)
                 return;
 
             var headerValue = await authenticationHeaderAccessor

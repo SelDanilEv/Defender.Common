@@ -1,10 +1,10 @@
-﻿using System.Security.Claims;
-using Microsoft.AspNetCore.Http;
-using Defender.Common.Interfaces;
-using Defender.Common.Exceptions;
+﻿using Defender.Common.Enums;
 using Defender.Common.Errors;
+using Defender.Common.Exceptions;
 using Defender.Common.Helpers;
-using Defender.Common.Enums;
+using Defender.Common.Interfaces;
+using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
 
 namespace Defender.Common.Accessors;
 
@@ -32,7 +32,7 @@ public class CurrentAccountAccessor(
     {
         var currentUserClaims = httpContextAccessor.HttpContext?.User.Claims;
 
-        if(currentUserClaims == null)
+        if (currentUserClaims == null)
         {
             return [];
         }

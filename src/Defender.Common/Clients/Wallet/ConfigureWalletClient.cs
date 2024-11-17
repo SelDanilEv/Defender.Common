@@ -5,7 +5,7 @@ namespace Defender.Common.Clients.Wallet;
 public static class ConfigureWalletClient
 {
     public static void RegisterWalletClient(
-        this IServiceCollection services, 
+        this IServiceCollection services,
         Action<IServiceProvider, HttpClient> configureClient)
     {
         services.AddHttpClient<IWalletServiceClient, WalletServiceClient>(

@@ -21,7 +21,7 @@ public class ValidationException : ServiceException
     {
         Errors = failures
             .GroupBy(e => e.PropertyName, e => e.ErrorMessage)
-            .ToDictionary(failureGroup => failureGroup.Key, 
+            .ToDictionary(failureGroup => failureGroup.Key,
                 failureGroup => failureGroup.ToArray());
     }
 

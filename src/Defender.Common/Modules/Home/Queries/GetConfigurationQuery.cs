@@ -1,7 +1,7 @@
-﻿using System.Collections;
-using Defender.Common.Enums;
+﻿using Defender.Common.Enums;
 using Defender.Common.Helpers;
 using MediatR;
+using System.Collections;
 
 namespace Defender.Common.Modules.Home.Queries;
 
@@ -10,7 +10,7 @@ public record GetConfigurationQuery : IRequest<Dictionary<string, string>>
     public ConfigurationLevel Level { get; set; } = ConfigurationLevel.All;
 };
 
-public class GetConfigurationQueryHandler 
+public class GetConfigurationQueryHandler
     : IRequestHandler<GetConfigurationQuery, Dictionary<string, string>>
 {
     public async Task<Dictionary<string, string>> Handle(
@@ -21,7 +21,7 @@ public class GetConfigurationQueryHandler
         switch (request.Level)
         {
             case ConfigurationLevel.All:
-                var allProcessEnvVariables = 
+                var allProcessEnvVariables =
                     Environment.GetEnvironmentVariables(EnvironmentVariableTarget.Process);
                 foreach (DictionaryEntry envVariable in allProcessEnvVariables)
                 {
@@ -35,7 +35,7 @@ public class GetConfigurationQueryHandler
                     EnvironmentVariableTarget.User);
                 foreach (DictionaryEntry envVariable in allUserEnvVariables)
                 {
-                    var (key, value) = (envVariable.Key.ToString(), 
+                    var (key, value) = (envVariable.Key.ToString(),
                         envVariable.Value?.ToString() ?? String.Empty);
                     if (key != null && value != null)
                         result.TryAdd(key, value);
@@ -45,7 +45,7 @@ public class GetConfigurationQueryHandler
                     EnvironmentVariableTarget.Machine);
                 foreach (DictionaryEntry envVariable in allMachineEnvVariables)
                 {
-                    var (key, value) = (envVariable.Key.ToString(), 
+                    var (key, value) = (envVariable.Key.ToString(),
                         envVariable.Value?.ToString() ?? String.Empty);
                     if (key != null && value != null)
                         result.TryAdd(key, value);

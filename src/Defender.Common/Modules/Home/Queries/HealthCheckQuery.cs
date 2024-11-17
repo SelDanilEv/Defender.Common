@@ -9,7 +9,7 @@ public class HealthCheckQueryHandler(
     ) : IRequestHandler<HealthCheckQuery, HealthCheckDto>
 {
     public Task<HealthCheckDto> Handle(
-        HealthCheckQuery request, 
+        HealthCheckQuery request,
         CancellationToken cancellationToken)
     {
         return Task.FromResult(new HealthCheckDto("Health"));

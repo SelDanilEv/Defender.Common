@@ -1,7 +1,7 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
-using MongoDB.Bson;
-using Defender.Common.DB.SharedStorage.Enums;
+﻿using Defender.Common.DB.SharedStorage.Enums;
 using Defender.Mongo.MessageBroker.Models.TopicMessage;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace Defender.Common.DB.SharedStorage.Entities;
 

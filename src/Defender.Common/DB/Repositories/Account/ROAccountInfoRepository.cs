@@ -7,10 +7,10 @@ using Microsoft.Extensions.Options;
 namespace Defender.Common.DB.Repositories.Account;
 
 internal class ROAccountInfoRepository(
-    IOptions<MongoDbOptions> mongoOption) 
+    IOptions<MongoDbOptions> mongoOption)
     : BaseMongoRepository<BaseAccountInfo>(
         new MongoDbOptions(
-            ConstValues.IdentityServiceMongoDBName, 
+            ConstValues.IdentityServiceMongoDBName,
             mongoOption?.Value!),
             typeof(BaseAccountInfo).Name.Replace("Base", "")),
     IAccountAccessor

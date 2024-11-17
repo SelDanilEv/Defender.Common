@@ -27,7 +27,7 @@ namespace Defender.Common.Exceptions
         {
         }
 
-        public bool IsErrorCode(ErrorCode errorCode) 
+        public bool IsErrorCode(ErrorCode errorCode)
             => this.Message == ErrorCodeHelper.GetErrorCode(errorCode);
     }
 }

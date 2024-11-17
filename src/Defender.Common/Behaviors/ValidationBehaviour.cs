@@ -1,6 +1,5 @@
 ﻿using Defender.Common.Errors;
 using FluentValidation;
-using Defender.Common.Extension;
 using MediatR;
 
 namespace Defender.Common.Behaviors;

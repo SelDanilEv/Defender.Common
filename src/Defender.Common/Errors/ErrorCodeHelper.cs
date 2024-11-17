@@ -3,8 +3,8 @@
 public class ErrorCodeHelper
 {
     public static string GetErrorCode(ErrorCode status) =>
-            status.ToString(); 
-    
+            status.ToString();
+
     public static string GetErrorCode(string status) =>
      GetErrorCode(ToErrorCode(status));
 

@@ -207,7 +207,7 @@ public abstract class BaseMongoRepository<Model> where Model : IBaseModel, new()
         FindModelRequest<Model> replaceFilter,
         IClientSessionHandle? session = null)
     {
-        if(updatedModel.Id == Guid.Empty)
+        if (updatedModel.Id == Guid.Empty)
         {
             var existingModel = await GetItemAsync(replaceFilter);
             updatedModel.Id = existingModel?.Id ?? Guid.NewGuid();

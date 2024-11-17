@@ -12,8 +12,8 @@ internal class ROSecretRepository(
     IOptions<MongoDbOptions> mongoOption)
     : BaseMongoRepository<MongoSecret>(
         new MongoDbOptions(
-            ConstValues.SecretManagementServiceMongoDBName, 
-            mongoOption?.Value!)), 
+            ConstValues.SecretManagementServiceMongoDBName,
+            mongoOption?.Value!)),
     IMongoSecretAccessor
 {
     public async Task<string> GetSecretValueByNameAsync(string secretName)

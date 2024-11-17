@@ -7,7 +7,7 @@ namespace Defender.Common.Service;
 
 internal class AuthorizationCheckingService(
         ICurrentAccountAccessor currentAccountAccessor,
-        IAccountAccessor accountAccessor) 
+        IAccountAccessor accountAccessor)
     : IAuthorizationCheckingService
 {
 
