@@ -278,7 +278,7 @@ public abstract class BaseMongoRepository<Model> where Model : IBaseModel, new()
 
     #endregion
 
-    protected FilterDefinition<Model> CreateIdFilter(Guid id)
+    protected static FilterDefinition<Model> CreateIdFilter(Guid id)
     {
         return Builders<Model>.Filter.Eq(s => s.Id, id);
     }
