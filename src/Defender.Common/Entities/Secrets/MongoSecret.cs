@@ -1,9 +1,13 @@
 ﻿using Defender.Common.Enums;
+using MongoDB.Bson.Serialization.Attributes;
+using MongoDB.Bson;
 
 namespace Defender.Common.Entities.Secrets;
 
 public record MongoSecret : IBaseModel
 {
+    [BsonId]
+    [BsonRepresentation(BsonType.String)]
     public Guid Id { get; set; }
     public string? SecretName { get; set; }
     public string? Value { get; set; }

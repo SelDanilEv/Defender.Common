@@ -1,5 +1,6 @@
 ﻿using Defender.Common.Enums;
 using Defender.Common.Helpers;
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace Defender.Common.Entities.AccountInfo;
@@ -8,6 +9,7 @@ namespace Defender.Common.Entities.AccountInfo;
 public record BaseAccountInfo : IBaseModel
 {
     [BsonId]
+    [BsonRepresentation(BsonType.String)]
     public Guid Id { get; set; }
 
     public List<string> Roles { get; set; } = [];
