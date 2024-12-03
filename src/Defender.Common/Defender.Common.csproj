@@ -5,7 +5,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<PackageId>Defender.Common</PackageId>
-		<Version>1.3.1</Version>
+		<Version>1.3.2</Version>
 		<Authors>Defender</Authors>
 		<Company>DefenderSD</Company>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -13,7 +13,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="AutoMapper" Version="13.0.1" />
-		<PackageReference Include="Defender.Mongo.MessageBroker" Version="8.1.4" />
+		<PackageReference Include="Defender.Mongo.MessageBroker" Version="8.1.5" />
 		<PackageReference Include="FluentValidation" Version="11.11.0" />
 		<PackageReference Include="MediatR" Version="12.4.1" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.11" />
