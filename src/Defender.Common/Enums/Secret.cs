@@ -7,4 +7,5 @@ public enum Secret
     SecretsEncryptionKey,
     SharedROConnectionString,
     SharedAdminConnectionString,
+    DistributedCacheConnectionString,
 }
