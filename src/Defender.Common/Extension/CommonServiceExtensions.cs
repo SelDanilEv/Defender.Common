@@ -35,7 +35,7 @@ public static class CommonServiceExtensions
     }
 
     private static IServiceCollection AddCommonOptions(
-        this IServiceCollection services, 
+        this IServiceCollection services,
         IConfiguration configuration)
     {
         services.Configure<MongoDbOptions>(configuration.GetSection(nameof(MongoDbOptions)));

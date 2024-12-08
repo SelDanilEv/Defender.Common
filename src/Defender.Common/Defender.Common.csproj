@@ -13,6 +13,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="AutoMapper" Version="13.0.1" />
+		<PackageReference Include="Confluent.Kafka" Version="2.6.1" />
 		<PackageReference Include="Defender.Mongo.MessageBroker" Version="8.1.5" />
 		<PackageReference Include="FluentValidation" Version="11.11.0" />
 		<PackageReference Include="MediatR" Version="12.4.1" />

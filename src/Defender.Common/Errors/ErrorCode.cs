@@ -240,6 +240,8 @@ public enum ErrorCode
     CM_DatabaseIssue,
     CM_MappingIssue,
 
+    CM_NoResponseForTheCorrelatedKafkaRequest,
+    CM_KafkaIssue
 
     #endregion
 }

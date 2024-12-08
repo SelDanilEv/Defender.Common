@@ -7,7 +7,7 @@ namespace Defender.Common.DB.SharedStorage.Options.Base;
 public abstract record TransactionStatusesTopicBaseOptions
     : MessageBrokerOptions<TransactionStatusUpdatedEvent>
 {
-    public TransactionStatusesTopicBaseOptions(AppEnvironment envPrefix)
+    protected TransactionStatusesTopicBaseOptions(AppEnvironment envPrefix)
     {
         MongoDbDatabaseName = $"{envPrefix}_shared";
 
