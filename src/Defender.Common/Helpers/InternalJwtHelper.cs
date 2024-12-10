@@ -16,11 +16,9 @@ public static class InternalJwtHelper
                     new Claim(
                         ClaimTypes.NameIdentifier,
                         Guid.Empty.ToString())};
-
-        foreach (var role in Roles.Any.Split(','))
-        {
-            claims.Add(new Claim(ClaimTypes.Role, role));
-        }
+        
+        claims.AddRange(Roles.Any.Split(',')
+            .Select(role => new Claim(ClaimTypes.Role, role)));
 
         var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(
             await SecretsHelper.GetSecretAsync(Secret.JwtSecret)));
