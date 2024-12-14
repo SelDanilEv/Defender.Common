@@ -1,5 +1,6 @@
 ﻿using Confluent.Kafka;
 using Defender.Common.Configuration.Options.Kafka;
+using Defender.Common.Kafka.Service;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -9,10 +10,12 @@ public class DefaultKafkaConsumer<TValue> : IDefaultKafkaConsumer<TValue>, IDisp
 {
     private readonly IConsumer<Ignore, TValue> _consumer;
     private readonly ILogger<DefaultKafkaConsumer<TValue>> _logger;
+    private readonly IKafkaTopicNameResolver _kafkaTopicNameResolver;
 
     public DefaultKafkaConsumer(
         IOptions<KafkaOptions> kafkaOptions, 
         ILogger<DefaultKafkaConsumer<TValue>> logger,
+        IKafkaTopicNameResolver kafkaTopicNameResolver,
         IDeserializer<TValue> valueSerializer)
     {
         if (string.IsNullOrWhiteSpace(kafkaOptions?.Value?.BootstrapServers))
@@ -21,6 +24,7 @@ public class DefaultKafkaConsumer<TValue> : IDefaultKafkaConsumer<TValue>, IDisp
         }
 
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _kafkaTopicNameResolver = kafkaTopicNameResolver ?? throw new ArgumentNullException(nameof(kafkaTopicNameResolver));
 
         var config = new ConsumerConfig
         {
@@ -41,6 +45,8 @@ public class DefaultKafkaConsumer<TValue> : IDefaultKafkaConsumer<TValue>, IDisp
         Func<TValue, Task> handleMessage,
         CancellationToken cancellationToken)
     {
+        topic = _kafkaTopicNameResolver.ResolveTopicName(topic);
+        
         if (string.IsNullOrWhiteSpace(topic))
         {
             throw new ArgumentException("Topic name cannot be null or empty.", nameof(topic));
@@ -69,15 +75,11 @@ public class DefaultKafkaConsumer<TValue> : IDefaultKafkaConsumer<TValue>, IDisp
                         if (consumeResult is not null && consumeResult.Message.Value is not null)
                             await handleMessage(consumeResult.Message.Value);
                     }
-                    catch (ConsumeException ex)
+                    catch (Exception ex)
                     {
                         _logger.LogError(ex, "Error consuming message from topic {Topic}.", topic);
                     }
                 }
-            }
-            catch (OperationCanceledException)
-            {
-                _logger.LogInformation("Kafka consumer operation canceled.");
             }
             finally
             {

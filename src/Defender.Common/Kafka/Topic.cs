@@ -2,26 +2,22 @@
 
 public enum Topic
 {
-    CorrelatedResponses
+    CorrelatedResponses,
+    TransactionStatusUpdates,
 }
 
 public static class TopicExtensions
 {
-    private static class Topics
-    {
-        public const string CorrelatedResponses = "correlated-responses-topic";
-    }
-
-    private static readonly Dictionary<Topic, string> _topicToStringMap =
+    private static readonly Dictionary<Topic, string> TopicToStringMap =
         new()
         {
-            { Topic.CorrelatedResponses, Topics.CorrelatedResponses },
+            { Topic.CorrelatedResponses, "correlated-responses-topic" },
+            { Topic.TransactionStatusUpdates, "transaction-status-updates-topic" },
         };
-
 
     public static string GetName(this Topic topic)
     {
-        if (_topicToStringMap.TryGetValue(topic, out var name))
+        if (TopicToStringMap.TryGetValue(topic, out var name))
         {
             return name;
         }
@@ -30,7 +26,7 @@ public static class TopicExtensions
 
     public static Topic ToTopic(this string topic)
     {
-        var stringToTopicMap = _topicToStringMap.ToDictionary(kvp => kvp.Value, kvp => kvp.Key);
+        var stringToTopicMap = TopicToStringMap.ToDictionary(kvp => kvp.Value, kvp => kvp.Key);
         if (stringToTopicMap.TryGetValue(topic, out var result))
         {
             return result;

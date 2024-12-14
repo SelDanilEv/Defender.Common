@@ -1,5 +1,6 @@
 ﻿using Confluent.Kafka;
 using Defender.Common.Configuration.Options.Kafka;
+using Defender.Common.Kafka.Service;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -9,10 +10,12 @@ public class DefaultKafkaProducer<TValue> : IDefaultKafkaProducer<TValue>, IDisp
 {
     private readonly IProducer<Null, TValue> _producer;
     private readonly ILogger<DefaultKafkaProducer<TValue>> _logger;
+    private readonly IKafkaTopicNameResolver _kafkaTopicNameResolver;
 
     public DefaultKafkaProducer(
         IOptions<KafkaOptions> kafkaOptions,
-        ILogger<DefaultKafkaProducer<TValue>> logger,
+        ILogger<DefaultKafkaProducer<TValue>> logger,        
+        IKafkaTopicNameResolver kafkaTopicNameResolver,
         ISerializer<TValue> valueSerializer)
     {
         if (kafkaOptions?.Value?.BootstrapServers == null)
@@ -21,6 +24,7 @@ public class DefaultKafkaProducer<TValue> : IDefaultKafkaProducer<TValue>, IDisp
         }
 
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _kafkaTopicNameResolver = kafkaTopicNameResolver ?? throw new ArgumentNullException(nameof(kafkaTopicNameResolver));
 
         var config = new ProducerConfig
         {
@@ -40,6 +44,8 @@ public class DefaultKafkaProducer<TValue> : IDefaultKafkaProducer<TValue>, IDisp
         TValue value,
         CancellationToken cancellationToken)
     {
+        topic = _kafkaTopicNameResolver.ResolveTopicName(topic);
+
         try
         {
             var message = new Message<Null, TValue>
