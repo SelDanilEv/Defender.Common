@@ -16,7 +16,7 @@ public static class InternalJwtHelper
                     new Claim(
                         ClaimTypes.NameIdentifier,
                         Guid.Empty.ToString())};
-        
+
         claims.AddRange(Roles.Any.Split(',')
             .Select(role => new Claim(ClaimTypes.Role, role)));
 
