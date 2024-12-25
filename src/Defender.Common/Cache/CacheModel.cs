@@ -1,8 +1,7 @@
-﻿namespace Defender.Common.Cache
+﻿namespace Defender.Common.Cache;
+
+public enum CacheModel
 {
-    public enum CacheModel
-    {
-        Wallet,
-        Positions,
-    }
+    Wallet,
+    Positions,
 }
