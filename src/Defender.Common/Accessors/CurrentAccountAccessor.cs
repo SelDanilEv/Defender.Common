@@ -4,23 +4,24 @@ using Defender.Common.Exceptions;
 using Defender.Common.Helpers;
 using Defender.Common.Interfaces;
 using Microsoft.AspNetCore.Http;
-using System.Security.Claims;
+using ClaimTypes = Defender.Common.Consts.ClaimTypes;
 
 namespace Defender.Common.Accessors;
 
-public class CurrentAccountAccessor(
-    IHttpContextAccessor httpContextAccessor)
+public class CurrentAccountAccessor(IHttpContextAccessor httpContextAccessor)
     : ICurrentAccountAccessor
 {
     public Guid GetAccountId()
     {
         var currentUserClaims = httpContextAccessor.HttpContext?.User.Claims;
 
-        if (currentUserClaims == null || !Guid.TryParse(
-                currentUserClaims
-                .FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?
-                .Value,
-            out var userId))
+        if (
+            currentUserClaims == null
+            || !Guid.TryParse(
+                currentUserClaims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value,
+                out var userId
+            )
+        )
         {
             throw new ServiceException(ErrorCode.CM_InvalidUserJWT);
         }
@@ -38,9 +39,9 @@ public class CurrentAccountAccessor(
         }
 
         return currentUserClaims
-                .Where(x => x.Type == ClaimTypes.Role)
-                .Select(x => x.Value)
-                .ToList();
+            .Where(x => x.Type == ClaimTypes.Role)
+            .Select(x => x.Value)
+            .ToList();
     }
 
     public Role GetHighestRole()
@@ -55,9 +56,6 @@ public class CurrentAccountAccessor(
 
     public string? Token
     {
-        get
-        {
-            return httpContextAccessor?.HttpContext?.Request?.Headers?.Authorization;
-        }
+        get { return httpContextAccessor?.HttpContext?.Request?.Headers?.Authorization; }
     }
 }
