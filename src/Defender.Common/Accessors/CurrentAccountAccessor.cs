@@ -1,10 +1,11 @@
-﻿using Defender.Common.Enums;
+﻿using System.Security.Claims;
+using Defender.Common.Enums;
 using Defender.Common.Errors;
 using Defender.Common.Exceptions;
 using Defender.Common.Helpers;
 using Defender.Common.Interfaces;
 using Microsoft.AspNetCore.Http;
-using ClaimTypes = Defender.Common.Consts.ClaimTypes;
+using CustomClaimTypes = Defender.Common.Consts.ClaimTypes;
 
 namespace Defender.Common.Accessors;
 
@@ -18,7 +19,7 @@ public class CurrentAccountAccessor(IHttpContextAccessor httpContextAccessor)
         if (
             currentUserClaims == null
             || !Guid.TryParse(
-                currentUserClaims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value,
+                currentUserClaims.FirstOrDefault(x => x.Type == CustomClaimTypes.NameIdentifier)?.Value,
                 out var userId
             )
         )
